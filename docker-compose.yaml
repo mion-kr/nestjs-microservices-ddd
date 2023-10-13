@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  users:
+    build:
+      context: .
+      dockerfile: ./apps/users/Dockerfile
+      target: development
+    command: pnpm run start:debug users
+    env_file:
+      - ./apps/users/.env
+    ports:
+      - 3000:3000 # port for the app
+      - 19229:9229 # port for the debugger
+    volumes:
+      - .:/usr/src/app
+
+  auth:
+    build:
+      context: .
+      dockerfile: ./apps/auth/Dockerfile
+      target: development
+    command: pnpm run start:debug auth
+    env_file:
+      - ./apps/auth/.env
+    ports:
+      - 3001:3001 # port for the app
+      - 19230:9229 # port for the debugger
+    volumes:
+      - .:/usr/src/app
+
+  posts:
+    build:
+      context: .
+      dockerfile: ./apps/posts/Dockerfile
+      target: development
+    command: pnpm run start:debug posts
+    env_file:
+      - ./apps/posts/.env
+    ports:
+      - 3002:3002 # port for the app
+      - 19231:9229 # port for the debugger
+    volumes:
+      - .:/usr/src/app
+
+  aws:
+    build:
+      context: .
+      dockerfile: ./apps/aws/Dockerfile
+      target: development
+    command: pnpm run start:debug aws
+    env_file:
+      - ./apps/aws/.env
+    ports:
+      - 3003:3003 # port for the app
+      - 19232:9229 # port for the debugger
+    volumes:
+      - .:/usr/src/app
+
+  postgres:
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: reasearch-2023
+    volumes:
+      - ./postgres/data/db:/var/lib/postgresql/data

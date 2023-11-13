@@ -21,7 +21,8 @@ async function bootstrap() {
   app.use(CookieParser()); // 쿠키가 있는 요청은 이 미들웨어를 통해 쿠키를 파싱합니다.
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true })); // Add class validation pipe
 
-  // await app.listen(3000);
   await app.startAllMicroservices();
+
+  await app.listen(configService.get('HTTP_PORT'));
 }
 bootstrap();

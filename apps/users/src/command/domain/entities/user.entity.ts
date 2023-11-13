@@ -62,7 +62,9 @@ export class User extends AbstractEntity {
   }
 
   private async setPassword(password: string) {
-    this.password = await bcrypt.hash(password, 10);
+    const round = bcrypt.getRounds(password);
+
+    this.password = isNaN(round) ? await bcrypt.hash(password, 10) : password;
   }
 
   /**
@@ -96,7 +98,7 @@ export class User extends AbstractEntity {
    * 비밀번호 일치 여부
    */
   async matchPassword(newPassword: string): Promise<boolean> {
-    return await bcrypt.compare(this.password, newPassword);
+    return await bcrypt.compare(newPassword, this.password);
   }
 
   /**

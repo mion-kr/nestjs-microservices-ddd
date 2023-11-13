@@ -2,10 +2,13 @@ import { LoggerModule, USER_SERVICE } from '@app/common';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CqrsModule } from '@nestjs/cqrs';
+import { JwtModule } from '@nestjs/jwt';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import * as Joi from 'joi';
+import { CommandHandlers } from './command/handlers';
 import { Controllers } from './presentation';
 import { QueryHandlers } from './query/handler';
+import { Strategies } from './strategies';
 
 @Module({
   imports: [
@@ -19,6 +22,16 @@ import { QueryHandlers } from './query/handler';
         USER_HOST: Joi.string().required(),
         USER_TCP_PORT: Joi.number().required(),
       }),
+    }),
+
+    JwtModule.registerAsync({
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: {
+          expiresIn: `${configService.get<string>('JWT_EXPIRATION')}s`,
+        },
+      }),
+      inject: [ConfigService],
     }),
 
     CqrsModule,
@@ -38,6 +51,6 @@ import { QueryHandlers } from './query/handler';
     ]),
   ],
   controllers: [...Controllers],
-  providers: [...QueryHandlers],
+  providers: [...Strategies, ...CommandHandlers, ...QueryHandlers],
 })
 export class AuthModule {}

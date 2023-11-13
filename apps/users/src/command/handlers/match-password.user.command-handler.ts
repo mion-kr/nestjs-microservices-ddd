@@ -13,8 +13,8 @@ export class MatchPasswordUserCommandHandler
     this.userRepository = userRepositoryImpl;
   }
 
-  async execute(command: MatchPasswordUserCommand): Promise<any> {
+  async execute(command: MatchPasswordUserCommand): Promise<boolean> {
     const user = await this.userRepository.findByEmail(command.email);
-    return user.matchPassword(command.password);
+    return await user.matchPassword(command.password);
   }
 }

@@ -1,6 +1,8 @@
 import { FindAllQuery, PrismaService, UserView } from '@app/common';
 import { Injectable } from '@nestjs/common';
+import { isObject } from '@nestjs/common/utils/shared.utils';
 import { UserId } from '../command/domain/entities/user.id';
+import { NotFoundUserException } from '../exception/not-found-user.exception';
 import { UserViewRepository } from '../query/domain/user.view-repository';
 
 @Injectable()
@@ -21,6 +23,7 @@ export class UserViewRepositoryImpl implements UserViewRepository {
         deletedAt: null,
       },
     });
+    if (!isObject(savedUser)) throw new NotFoundUserException();
 
     return await UserView.create(savedUser);
   }
@@ -32,6 +35,7 @@ export class UserViewRepositoryImpl implements UserViewRepository {
         deletedAt: null,
       },
     });
+    if (!isObject(savedUser)) throw new NotFoundUserException();
 
     return await UserView.create(savedUser);
   }
@@ -43,6 +47,7 @@ export class UserViewRepositoryImpl implements UserViewRepository {
         deletedAt: null,
       },
     });
+    if (!isObject(savedUser)) throw new NotFoundUserException();
 
     return await UserView.create(savedUser);
   }

@@ -13,7 +13,7 @@ export class UserMatchPasswordQueryHandler
   implements IQueryHandler<UserMatchPasswordQuery>
 {
   constructor(@Inject(USER_SERVICE) private client: ClientProxy) {}
-  async execute(query: UserMatchPasswordQuery): Promise<any> {
+  async execute(query: UserMatchPasswordQuery): Promise<boolean> {
     const isMatched = await firstValueFrom(
       this.client.send<boolean>(USER_SERVICE_METHOD.MATCH_PASSWORD, query),
     );

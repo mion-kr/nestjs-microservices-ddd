@@ -18,9 +18,10 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 
   async validate(email: string, password: string) {
     try {
-      const isMatched = this.queryBus.execute<UserMatchPasswordQuery, boolean>(
-        new UserMatchPasswordQuery({ email, password }),
-      );
+      const isMatched = await this.queryBus.execute<
+        UserMatchPasswordQuery,
+        boolean
+      >(new UserMatchPasswordQuery({ email, password }));
 
       if (!isMatched) {
         throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');

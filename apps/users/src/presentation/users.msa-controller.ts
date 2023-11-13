@@ -20,7 +20,7 @@ export class UsersMsaController {
   @MessagePattern(USER_SERVICE_METHOD.FIND_BY_ID)
   async findById(@Payload() query: FindByIdUsersQuery) {
     const user: UserView = await this.queryBus.execute<FindByIdUsersQuery>(
-      query,
+      new FindByIdUsersQuery(query),
     );
     return user;
   }
@@ -28,7 +28,7 @@ export class UsersMsaController {
   @MessagePattern(USER_SERVICE_METHOD.FIND_BY_EMAIL)
   async findByEmail(@Payload() query: FindByEmailUsersQuery) {
     const user: UserView = await this.queryBus.execute<FindByEmailUsersQuery>(
-      query,
+      new FindByEmailUsersQuery(query),
     );
     return user;
   }

@@ -37,7 +37,7 @@ export class UserRepositoryImpl implements UserRepository {
   async findByEmail(email: string): Promise<User> {
     const savedUser = await this.prismaService.user.findUnique({
       where: {
-        id: email,
+        email: email,
         deletedAt: null,
       },
     });

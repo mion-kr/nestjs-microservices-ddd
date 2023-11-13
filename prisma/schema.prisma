@@ -3,7 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
-previewFeatures = ["postgresqlExtensions"]
+  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
@@ -13,8 +13,8 @@ datasource db {
 
 model User {
   id        String      @id 
-  email     String   
-  nickName      String? @map("nick_name")
+  email     String   @unique()
+  nickName  String @unique @map("nick_name")
   password  String
   signOutDate DateTime? @map("sign_out_date")
   lastLoginDate DateTime? @map("last_login_date")
@@ -22,10 +22,10 @@ model User {
   comments  PostComment[]
 
   createBy String @map("create_by")
-  createdAt DateTime @default(now())
-  updateBy String @map("update_by")
-  updatedAt DateTime @updatedAt
-  deleteBy String @map("delete_by")
+  createdAt DateTime @default(now()) @map("created_at")
+  updateBy String? @map("update_by")
+  updatedAt DateTime? @updatedAt  @map("updated_at")
+  deleteBy String? @map("delete_by") 
   deletedAt DateTime? @map("deleted_at")
 
   @@map("user")
@@ -38,55 +38,39 @@ model Post {
   user      User?   @relation(fields: [userId], references: [id])
   userId    String? @map("user_id")
   isUse     Boolean @default(true) @map("is_use")
-  images   PostImage[]
+  imageUrls   String[] @map("image_urls")
   comments PostComment[]
   likeUserIds String[] @map("like_user_ids")
 
   createBy String @map("create_by")
-  createdAt DateTime @default(now())
-  updateBy String @map("update_by")
-  updatedAt DateTime @updatedAt
-  deleteBy String @map("delete_by")
+  createdAt DateTime @default(now()) @map("created_at")
+  updateBy String? @map("update_by")
+  updatedAt DateTime? @updatedAt  @map("updated_at")
+  deleteBy String? @map("delete_by") 
   deletedAt DateTime? @map("deleted_at")
 
   @@map("post")
 }
 
-model PostImage {
-  id        String      @id 
-  postId    String? @map("post_id")
-  post Post? @relation(fields: [postId], references: [id])
-  url     String
+model PostComment {
+  id              String      @id
+  post            Post?       @relation(fields: [postId], references: [id]) 
+  postId          String?     @map("post_id")
+  user            User?       @relation(fields: [userId], references: [id])
+  userId          String?     @map("user_id")
+  comment         String
+  parentCommentId String?     @map("parent_comment_id")
+  parentComment   PostComment? @relation("parentComments", fields: [parentCommentId], references: [id])
+  childComments   PostComment[] @relation("parentComments")
+  isUse           Boolean     @default(true) @map("is_use")
+  likeUserIds String[] @map("like_user_ids")
 
   createBy String @map("create_by")
-  createdAt DateTime @default(now())
-  updateBy String @map("update_by")
-  updatedAt DateTime @updatedAt
-  deleteBy String @map("delete_by")
+  createdAt DateTime @default(now()) @map("created_at")
+  updateBy String? @map("update_by")
+  updatedAt DateTime? @updatedAt  @map("updated_at")
+  deleteBy String? @map("delete_by") 
   deletedAt DateTime? @map("deleted_at")
-
-  @@map("post_image")
-}
-
-model PostComment {
-    id              String      @id
-    post            Post?       @relation(fields: [postId], references: [id]) 
-    postId          String?     @map("post_id")
-    user            User?       @relation(fields: [userId], references: [id])
-    userId          String?     @map("user_id")
-    comment         String
-    parentCommentId String?     @map("parent_comment_id")
-    parentComment   PostComment? @relation("parentComments", fields: [parentCommentId], references: [id])
-    childComments   PostComment[] @relation("parentComments")
-    isUse           Boolean     @default(true) @map("is_use")
-    likeUserIds String[] @map("like_user_ids")
-
-    createBy        String      @map("create_by")
-    createdAt       DateTime    @default(now())
-    updateBy        String      @map("update_by")
-    updatedAt       DateTime    @updatedAt
-    deleteBy        String      @map("delete_by")
-    deletedAt       DateTime?   @map("deleted_at")
 
     @@map("post_comment")
 }

@@ -1,10 +1,43 @@
+import { LoggerModule, USER_SERVICE } from '@app/common';
 import { Module } from '@nestjs/common';
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { CqrsModule } from '@nestjs/cqrs';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import * as Joi from 'joi';
+import { Controllers } from './presentation';
+import { QueryHandlers } from './query/handler';
 
 @Module({
-  imports: [],
-  controllers: [AuthController],
-  providers: [AuthService],
+  imports: [
+    LoggerModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      validationSchema: Joi.object({
+        TCP_PORT: Joi.number().required(),
+        JWT_SECRET: Joi.string().required(),
+        JWT_EXPIRATION: Joi.string().required(),
+        USER_HOST: Joi.string().required(),
+        USER_TCP_PORT: Joi.number().required(),
+      }),
+    }),
+
+    CqrsModule,
+
+    ClientsModule.registerAsync([
+      {
+        name: USER_SERVICE,
+        inject: [ConfigService],
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.TCP,
+          options: {
+            host: configService.get('USER_HOST'),
+            port: +configService.get('USER_TCP_PORT'),
+          },
+        }),
+      },
+    ]),
+  ],
+  controllers: [...Controllers],
+  providers: [...QueryHandlers],
 })
 export class AuthModule {}

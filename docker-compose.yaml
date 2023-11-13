@@ -9,6 +9,8 @@ services:
     command: pnpm run start:debug users
     env_file:
       - ./apps/users/.env
+    environment:
+      - TZ=Asia/Seoul
     ports:
       - 3000:3000 # port for the app
       - 19229:9229 # port for the debugger
@@ -23,6 +25,8 @@ services:
     command: pnpm run start:debug auth
     env_file:
       - ./apps/auth/.env
+    environment:
+      - TZ=Asia/Seoul
     ports:
       - 3001:3001 # port for the app
       - 19230:9229 # port for the debugger
@@ -37,6 +41,8 @@ services:
     command: pnpm run start:debug posts
     env_file:
       - ./apps/posts/.env
+    environment:
+      - TZ=Asia/Seoul
     ports:
       - 3002:3002 # port for the app
       - 19231:9229 # port for the debugger
@@ -51,6 +57,8 @@ services:
     command: pnpm run start:debug aws
     env_file:
       - ./apps/aws/.env
+    environment:
+      - TZ=Asia/Seoul
     ports:
       - 3003:3003 # port for the app
       - 19232:9229 # port for the debugger

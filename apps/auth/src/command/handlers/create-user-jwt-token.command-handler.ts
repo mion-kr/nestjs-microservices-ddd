@@ -1,4 +1,4 @@
-import { Header, UserView } from '@app/common';
+import { CookieHeader, UserView } from '@app/common';
 import { ConfigService } from '@nestjs/config';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { JwtService } from '@nestjs/jwt';
@@ -46,6 +46,6 @@ export class CreateUserJwtTokenCommandHandler
       expires.getSeconds() + this.configService.get('JWT_EXPIRATION'),
     );
 
-    response.cookie(Header.Authentication, token, { httpOnly: true });
+    response.cookie(CookieHeader.Authentication, token, { httpOnly: true });
   }
 }

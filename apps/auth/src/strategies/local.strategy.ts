@@ -27,10 +27,9 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
         throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
       }
 
-      const { password: responsePassword, ...user } =
-        await this.queryBus.execute<FindByEmailUsersQuery, UserView>(
-          new FindByEmailUsersQuery({ email }),
-        );
+      const user = await this.queryBus.execute<FindByEmailUsersQuery, UserView>(
+        new FindByEmailUsersQuery({ email }),
+      );
 
       return user;
     } catch (error) {

@@ -24,6 +24,7 @@ export class AuthController {
       response,
     });
 
+    // 쿠키로 JWT를 전송 합니다.
     await this.commandBus.execute(command);
 
     response.send(user);

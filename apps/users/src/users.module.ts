@@ -1,7 +1,8 @@
-import { DatabaseModule, LoggerModule } from '@app/common';
+import { AUTH_SERVICE, DatabaseModule, LoggerModule } from '@app/common';
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CqrsModule } from '@nestjs/cqrs';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import * as Joi from 'joi';
 import { CommandHandlers } from './command/handlers';
 import { EventHandlers } from './event/handlers';
@@ -26,6 +27,20 @@ import { UsersSaga } from './sagas/users.saga';
 
     CqrsModule,
     DatabaseModule,
+
+    ClientsModule.registerAsync([
+      {
+        name: AUTH_SERVICE,
+        inject: [ConfigService],
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.TCP,
+          options: {
+            host: configService.get('AUTH_HOST'),
+            port: +configService.get('AUTH_TCP_PORT'),
+          },
+        }),
+      },
+    ]),
   ],
   controllers: [...Controllers],
   providers: [

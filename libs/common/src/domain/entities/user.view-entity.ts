@@ -6,7 +6,7 @@ export class UserView {
 
   email: string;
   nickName: string;
-  password: string;
+  // password: string;
   signOutDate: dayjs.Dayjs;
   lastLoginDate: dayjs.Dayjs;
 
@@ -22,7 +22,7 @@ export class UserView {
       id,
       email,
       nickName,
-      password,
+      // password,
       signOutDate,
       lastLoginDate,
       createBy,
@@ -37,7 +37,7 @@ export class UserView {
     user.id = id;
     user.email = email;
     user.nickName = nickName;
-    user.password = password;
+    // user.password = password;
     user.signOutDate = dayjs(signOutDate);
     user.lastLoginDate = dayjs(lastLoginDate);
     user.createBy = createBy;

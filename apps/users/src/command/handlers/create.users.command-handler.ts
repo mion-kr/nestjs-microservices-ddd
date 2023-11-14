@@ -8,6 +8,8 @@ import * as dayjs from 'dayjs';
 import { nanoid } from 'nanoid';
 import { FindByEmailUsersQuery } from '../../../../../libs/common/src/query/user/find-by-email.users.query';
 import { CreatedUserEvent } from '../../event/impl/created.user.event';
+import { DuplicateEmailException } from '../../exception/duplicate-email.exception';
+import { DuplicateNicknameException } from '../../exception/duplicate-nickname.exception';
 import { NotFoundUserException } from '../../exception/not-found-user.exception';
 import { UserRepositoryImpl } from '../../infra/user.repository.impl';
 import { FindByNicknameUsersQuery } from '../../query/impl/find-by-nickname.users.query';
@@ -47,23 +49,37 @@ export class CreateCommandHandler
    * @param command
    */
   private async validate(command: CreateUsersCommand) {
-    // 이메일 중복 검사
+    await this.validateEmail(command);
+
+    await this.validateNickname(command);
+  }
+
+  /**
+   * 이메일 중복 검사
+   * @param command
+   */
+  private async validateEmail(command: CreateUsersCommand) {
     try {
       const savedEmail = await this.queryBus.execute<FindByEmailUsersQuery>(
         new FindByEmailUsersQuery(command),
       );
-      if (savedEmail) throw new Error('이미 가입된 이메일입니다.');
+      if (savedEmail) throw new DuplicateEmailException(command.email);
     } catch (error) {
       if (!(error instanceof NotFoundUserException)) throw error;
     }
+  }
 
-    // 닉네임 중복 검사
+  /**
+   * 닉네임 중복 검사
+   * @param command
+   */
+  private async validateNickname(command: CreateUsersCommand) {
     try {
       const savedNickname =
         await this.queryBus.execute<FindByNicknameUsersQuery>(
           new FindByNicknameUsersQuery(command),
         );
-      if (savedNickname) throw new Error('이미 사용중인 닉네임입니다.');
+      if (savedNickname) throw new DuplicateNicknameException(command.nickName);
     } catch (error) {
       if (!(error instanceof NotFoundUserException)) throw error;
     }

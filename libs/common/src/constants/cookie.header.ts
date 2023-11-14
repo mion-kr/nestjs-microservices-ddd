@@ -1,3 +1,3 @@
-export enum Header {
+export enum CookieHeader {
   Authentication = 'Authentication',
 }

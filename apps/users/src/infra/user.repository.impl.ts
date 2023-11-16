@@ -11,14 +11,26 @@ export class UserRepositoryImpl implements UserRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
   async save(user: User): Promise<void> {
-    await this.prismaService.user.create({
-      data: {
+    await this.prismaService.user.upsert({
+      create: {
         id: user.getId().toString(),
         email: user.getEmail(),
         password: user.getPassword(),
         nickName: user.getNickName(),
         createBy: user.getCreateBy(),
         createdAt: user.getCreatedAt().toDate(),
+      },
+      update: {
+        email: user.getEmail(),
+        password: user.getPassword(),
+        nickName: user.getNickName(),
+        lastLoginDate: user?.getLastLoginDate()?.toDate(),
+        signOutDate: user?.getSignOutDate()?.toDate(),
+        updateBy: user.getUpdateBy(),
+        updatedAt: user.getUpdatedAt().toDate(),
+      },
+      where: {
+        id: user.getId().toString(),
       },
     });
   }
@@ -50,11 +62,8 @@ export class UserRepositoryImpl implements UserRepository {
       ...prismaUser,
 
       id: UserId.create(prismaUser),
-      // createBy: prismaUser.createBy,
-      createdAt: dayjs(prismaUser.createBy),
-      // updateBy: prismaUser.updateBy,
+      createdAt: dayjs(prismaUser.createdAt),
       updatedAt: dayjs(prismaUser.updatedAt),
-      // deleteBy: prismaUser.deleteBy,
       deletedAt: dayjs(prismaUser.deletedAt),
     });
   }

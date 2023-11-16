@@ -6,7 +6,7 @@ import {
 } from '@nestjs/cqrs';
 import * as dayjs from 'dayjs';
 import { nanoid } from 'nanoid';
-import { FindByEmailUsersQuery } from '../../../../../libs/common/src/query/user/find-by-email.users.query';
+import { FindByEmailUsersQuery } from '../../../../../libs/common/src/query/users/find-by-email.users.query';
 import { CreatedUserEvent } from '../../event/impl/created.user.event';
 import { DuplicateEmailException } from '../../exception/duplicate-email.exception';
 import { DuplicateNicknameException } from '../../exception/duplicate-nickname.exception';

@@ -20,7 +20,7 @@ import { nanoid } from 'nanoid';
         wrapSerializers: true,
         serializers: {
           req: (req) => {
-            req.body = req.raw.body;
+            req.body = req?.raw?.body ?? req?.body; // grpc, tcp 요청을 위한 req?.body 변수
             const customReq = {
               id: req.id,
               method: req.method,
@@ -28,8 +28,7 @@ import { nanoid } from 'nanoid';
               query: req.query,
               params: req.params,
               headers: {
-                ...req.raw.headers,
-
+                ...(req?.raw?.headers ?? req?.headers),
                 // 로그에 표시하지 않을 헤더 셋팅
                 host: undefined,
                 connection: undefined,

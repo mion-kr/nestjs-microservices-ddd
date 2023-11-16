@@ -1,4 +1,4 @@
-import { CookieHeader, FindByIdUsersQuery } from '@app/common';
+import { CookieHeader, FindByIdUsersQuery, ReqId } from '@app/common';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { QueryBus } from '@nestjs/cqrs';
@@ -19,12 +19,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
           request?.[CookieHeader.Authentication], // 첫번째는 http 요청, 두번째는 rpc 요청에 대응
       ]),
       secretOrKey: configService.get('JWT_SECRET'),
+      passReqToCallback: true,
     });
   }
 
-  async validate({ userId }: TokenPayload) {
+  async validate(req, { userId }: TokenPayload) {
+    const reqId = ReqId.of(req.reqId);
     return this.queryBus.execute<FindByIdUsersQuery>(
-      new FindByIdUsersQuery({ id: userId }),
+      new FindByIdUsersQuery({ id: userId, reqId }),
     );
   }
 }

@@ -1,11 +1,13 @@
 import { Auth_SERVICE_METHOD, UserView } from '@app/common';
-import { Controller, UseGuards } from '@nestjs/common';
+import { Controller, UseGuards, UseInterceptors } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
+import { TcpLoggingInterceptor } from '../../../../libs/common/src/interceptor/tcp.logging.interceptor';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
 @Controller()
+@UseInterceptors(TcpLoggingInterceptor)
+@UseGuards(JwtAuthGuard)
 export class AuthMsaController {
-  @UseGuards(JwtAuthGuard)
   @MessagePattern(Auth_SERVICE_METHOD.AUTHENTICATE)
   async authenticate(@Payload() data: any & { user: UserView }) {
     return data.user;

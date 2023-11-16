@@ -10,6 +10,7 @@ import { Observable, catchError, map, of, tap } from 'rxjs';
 import { Auth_SERVICE_METHOD } from '../constants';
 import { AUTH_SERVICE } from '../constants/services';
 import { publicKey } from '../decorators';
+import { ReqId } from '../domain';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
@@ -27,9 +28,12 @@ export class JwtAuthGuard implements CanActivate {
     const jwt = context.switchToHttp().getRequest().cookies?.Authentication;
     if (!jwt) return false;
 
+    const reqId = context.switchToHttp().getRequest().id;
+
     return this.authClient
       .send(Auth_SERVICE_METHOD.AUTHENTICATE, {
         Authentication: jwt,
+        reqId: ReqId.of(reqId),
       })
       .pipe(
         tap((res) => {

@@ -6,6 +6,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import * as Joi from 'joi';
 import { CommandHandlers } from './command/handlers';
+import { EventHandlers } from './event/handlers';
 import { Controllers } from './presentation';
 import { QueryHandlers } from './query/handler';
 import { Strategies } from './strategies';
@@ -51,6 +52,11 @@ import { Strategies } from './strategies';
     ]),
   ],
   controllers: [...Controllers],
-  providers: [...Strategies, ...CommandHandlers, ...QueryHandlers],
+  providers: [
+    ...Strategies,
+    ...CommandHandlers,
+    ...QueryHandlers,
+    ...EventHandlers,
+  ],
 })
 export class AuthModule {}

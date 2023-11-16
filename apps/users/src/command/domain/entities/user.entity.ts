@@ -128,4 +128,12 @@ export class User extends AbstractEntity {
   getPassword(): string {
     return this.password;
   }
+
+  getLastLoginDate(): dayjs.Dayjs {
+    return this.lastLoginDate;
+  }
+
+  getSignOutDate(): dayjs.Dayjs {
+    return this.signOutDate;
+  }
 }

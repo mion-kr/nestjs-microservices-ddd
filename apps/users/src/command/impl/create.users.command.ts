@@ -1,20 +1,8 @@
-import {
-  IsEmail,
-  IsNotEmpty,
-  IsString,
-  IsStrongPassword,
-} from 'class-validator';
+import { PickType } from '@nestjs/mapped-types';
+import { User } from '../domain/entities/user.entity';
 
-export class CreateUsersCommand {
-  @IsEmail()
-  @IsNotEmpty()
-  email: string;
-
-  @IsString()
-  @IsNotEmpty()
-  nickName: string;
-
-  @IsStrongPassword({ minUppercase: 0, minLowercase: 1, minSymbols: 1 })
-  @IsNotEmpty()
-  password: string;
-}
+export class CreateUsersCommand extends PickType(User, [
+  'email',
+  'nickName',
+  'password',
+]) {}

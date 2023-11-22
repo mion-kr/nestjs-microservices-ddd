@@ -1,16 +1,31 @@
 import { AbstractEntity } from '@app/common';
 import * as bcrypt from 'bcryptjs';
+import { Expose } from 'class-transformer';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  IsStrongPassword,
+} from 'class-validator';
 import * as dayjs from 'dayjs';
+import { CanceledUserEvent } from '../../../event/impl/canceled.user.event';
+import { IsNotMatchPasswordException } from '../../../exception/is-not-match-password.exception';
 import { UserId } from './user.id';
 
 export class User extends AbstractEntity {
-  private id: UserId;
+  private _id: UserId;
 
-  private email: string;
-  private nickName: string;
-  private password: string;
-  private signOutDate: dayjs.Dayjs;
-  private lastLoginDate: dayjs.Dayjs;
+  @Expose({ name: 'email' })
+  private _email: string;
+
+  @Expose({ name: 'nickName' })
+  private _nickName: string;
+
+  @Expose({ name: 'password' })
+  private _password: string;
+
+  private _signOutDate: dayjs.Dayjs;
+  private _lastLoginDate: dayjs.Dayjs;
 
   /**
    * 도메인 객체 생성
@@ -43,28 +58,28 @@ export class User extends AbstractEntity {
     const entity = new User();
     entity.setId(id);
     await entity.setPassword(password);
-    entity.email = email;
-    entity.nickName = nickName;
+    entity._email = email;
+    entity._nickName = nickName;
 
-    entity.createBy = createBy;
-    entity.createdAt = createdAt;
-    entity.updateBy = updateBy;
-    entity.updatedAt = updatedAt;
-    entity.deleteBy = deleteBy;
-    entity.deletedAt = deletedAt;
+    entity._createBy = createBy;
+    entity._createdAt = createdAt;
+    entity._updateBy = updateBy;
+    entity._updatedAt = updatedAt;
+    entity._deleteBy = deleteBy;
+    entity._deletedAt = deletedAt;
 
     return entity;
   }
 
   private setId(id: UserId) {
     if (!id) throw Error(`회원 정보 id는 필수 값 입니다.`);
-    this.id = id;
+    this._id = id;
   }
 
   private async setPassword(password: string) {
     const round = bcrypt.getRounds(password);
 
-    this.password = isNaN(round) ? await bcrypt.hash(password, 10) : password;
+    this._password = isNaN(round) ? await bcrypt.hash(password, 10) : password;
   }
 
   /**
@@ -72,24 +87,28 @@ export class User extends AbstractEntity {
    */
   async changeInfo(params: { nickName: string }) {
     const { nickName } = params;
-    this.nickName = nickName;
+    this._nickName = nickName;
   }
 
   /**
    * 회원 탈퇴
    */
   async cancel() {
-    this.signOutDate = dayjs();
-    this.deleteBy = this.id.toString();
-    this.deletedAt = dayjs();
+    this._signOutDate = dayjs();
+    this._deleteBy = this._id.toString();
+    this._deletedAt = dayjs();
+
+    this.apply(new CanceledUserEvent(this._id));
   }
 
   /**
    * 비밀번호 변경
    */
-  async changePassword(newPassword: string) {
-    const isNotMatchPassword = !(await this.matchPassword(newPassword));
-    if (isNotMatchPassword) throw new Error(`비밀번호가 일치하지 않습니다.`);
+  async changePassword(params: { newPassword: string; oldPassword: string }) {
+    const { newPassword, oldPassword } = params;
+
+    const isNotMatchPassword = !(await this.matchPassword(oldPassword));
+    if (isNotMatchPassword) throw new IsNotMatchPasswordException();
 
     await this.setPassword(newPassword);
   }
@@ -97,15 +116,15 @@ export class User extends AbstractEntity {
   /**
    * 비밀번호 일치 여부
    */
-  async matchPassword(newPassword: string): Promise<boolean> {
-    return await bcrypt.compare(newPassword, this.password);
+  async matchPassword(password: string): Promise<boolean> {
+    return await bcrypt.compare(password, this._password);
   }
 
   /**
    * 마지막 로그인 일시 갱신
    */
   async updateLastLoginDate() {
-    this.lastLoginDate = dayjs();
+    this._lastLoginDate = dayjs();
   }
 
   /**
@@ -113,27 +132,33 @@ export class User extends AbstractEntity {
    */
   async createPost() {}
 
-  getId(): UserId {
-    return this.id;
+  get id(): UserId {
+    return this._id;
   }
 
-  getEmail(): string {
-    return this.email;
+  @IsEmail()
+  @IsNotEmpty()
+  get email(): string {
+    return this._email;
   }
 
-  getNickName(): string {
-    return this.nickName;
+  @IsString()
+  @IsNotEmpty()
+  get nickName(): string {
+    return this._nickName;
   }
 
-  getPassword(): string {
-    return this.password;
+  @IsStrongPassword({ minUppercase: 0, minLowercase: 1, minSymbols: 1 })
+  @IsNotEmpty()
+  get password(): string {
+    return this._password;
   }
 
-  getLastLoginDate(): dayjs.Dayjs {
-    return this.lastLoginDate;
+  get lastLoginDate(): dayjs.Dayjs {
+    return this._lastLoginDate;
   }
 
-  getSignOutDate(): dayjs.Dayjs {
-    return this.signOutDate;
+  get signOutDate(): dayjs.Dayjs {
+    return this._signOutDate;
   }
 }

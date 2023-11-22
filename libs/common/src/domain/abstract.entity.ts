@@ -2,34 +2,34 @@ import { AggregateRoot } from '@nestjs/cqrs';
 import * as dayjs from 'dayjs';
 
 export abstract class AbstractEntity extends AggregateRoot {
-  protected createBy: string;
-  protected createdAt: dayjs.Dayjs;
-  protected updateBy: string;
-  protected updatedAt: dayjs.Dayjs;
-  protected deleteBy: string;
-  protected deletedAt: dayjs.Dayjs;
+  protected _createBy: string;
+  protected _createdAt: dayjs.Dayjs;
+  protected _updateBy: string;
+  protected _updatedAt: dayjs.Dayjs;
+  protected _deleteBy: string;
+  protected _deletedAt: dayjs.Dayjs;
 
-  getCreateBy(): string {
-    return this.createBy;
+  get createBy(): string {
+    return this._createBy;
   }
 
-  getCreatedAt(): dayjs.Dayjs {
-    return this.createdAt;
+  get createdAt(): dayjs.Dayjs {
+    return this._createdAt;
   }
 
-  getUpdateBy(): string {
-    return this.updateBy;
+  get updateBy(): string {
+    return this._updateBy;
   }
 
-  getUpdatedAt(): dayjs.Dayjs {
-    return this.updatedAt;
+  get updatedAt(): dayjs.Dayjs {
+    return this._updatedAt;
   }
 
-  getDeleteBy(): string {
-    return this.deleteBy;
+  get deleteBy(): string {
+    return this._deleteBy;
   }
 
-  getDeletedAt(): dayjs.Dayjs {
-    return this.deletedAt;
+  get deletedAt(): dayjs.Dayjs {
+    return this._deletedAt;
   }
 }

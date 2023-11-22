@@ -1,17 +1,26 @@
 import {
+  CommonValidateFunction,
   CurrentReqId,
   CurrentUser,
   LoginUserEvent,
   ReqId,
   UserView,
 } from '@app/common';
-import { Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Res,
+  UseGuards,
+  UsePipes,
+} from '@nestjs/common';
 import { CommandBus, EventBus } from '@nestjs/cqrs';
 import { Response } from 'express';
 import { CreateUserJwtTokenCommand } from '../command/impl/create-user-jwt-token.command';
 import { LocalAuthGuards } from '../guards/local-auth.guard';
 
 @Controller('auth')
+@UsePipes(CommonValidateFunction)
 export class AuthController {
   constructor(
     private readonly commandBus: CommandBus,

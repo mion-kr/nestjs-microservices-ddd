@@ -16,7 +16,7 @@ export class UpdateUserLastLoginDateCommandHandler
     this.userRepository = userRepositoryImpl;
   }
   async execute(command: UpdateUserLastLoginDateCommand): Promise<any> {
-    const userId = UserId.create(command);
+    const userId = UserId.create({ id: command.idValue });
     const user = await this.userRepository.findById(userId);
     if (!isObject(user)) throw new NotFoundUserException();
 

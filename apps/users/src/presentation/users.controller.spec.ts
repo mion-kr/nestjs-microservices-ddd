@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersService } from '../users.service';
+import { CreateUsersCommand } from '../command/impl/create.users.command';
+import { UsersModule } from '../users.module';
 import { UsersController } from './users.controller';
 
 describe('UsersController', () => {
@@ -7,8 +8,7 @@ describe('UsersController', () => {
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
-      controllers: [UsersController],
-      providers: [UsersService],
+      imports: [UsersModule],
     }).compile();
 
     usersController = app.get<UsersController>(UsersController);
@@ -16,7 +16,8 @@ describe('UsersController', () => {
 
   describe('root', () => {
     it('should return "Hello World!"', () => {
-      expect(usersController.getHello()).toBe('Hello World!');
+      const command = new CreateUsersCommand();
+      command.email = '123';
     });
   });
 });

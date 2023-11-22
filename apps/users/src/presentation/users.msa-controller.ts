@@ -1,20 +1,21 @@
 import {
+  CommonMsaValidateFunction,
   FindByEmailUsersQuery,
+  FindByIdUsersQuery,
   LoginUserEvent,
+  TcpLoggingInterceptor,
   USER_SERVICE_METHOD,
   UserMatchPasswordQuery,
   UserView,
 } from '@app/common';
-import { Controller, UseInterceptors } from '@nestjs/common';
+import { Controller, UseInterceptors, UsePipes } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
-import { TcpLoggingInterceptor } from '../../../../libs/common/src/interceptor/tcp.logging.interceptor';
-import { FindByIdUsersQuery } from '../../../../libs/common/src/query/users/find-by-id.users.query';
-import { MatchPasswordUserCommand } from '../command/impl/match-password.user.command';
 import { UpdateUserLastLoginDateCommand } from '../command/impl/update-user-last-login-date.command';
 
 @Controller()
 @UseInterceptors(TcpLoggingInterceptor)
+@UsePipes(CommonMsaValidateFunction)
 export class UsersMsaController {
   constructor(
     private readonly queryBus: QueryBus,
@@ -40,16 +41,14 @@ export class UsersMsaController {
   @MessagePattern(USER_SERVICE_METHOD.MATCH_PASSWORD)
   async matchPassword(@Payload() query: UserMatchPasswordQuery) {
     const isMatched: boolean =
-      await this.commandBus.execute<MatchPasswordUserCommand>(
-        new MatchPasswordUserCommand(query),
-      );
+      await this.queryBus.execute<UserMatchPasswordQuery>(query);
     return isMatched;
   }
 
   @EventPattern(USER_SERVICE_METHOD.LOGIN)
   async login(@Payload() event: LoginUserEvent) {
     await this.commandBus.execute<UpdateUserLastLoginDateCommand>(
-      new UpdateUserLastLoginDateCommand(event),
+      new UpdateUserLastLoginDateCommand({ ...event, idValue: event.id }),
     );
   }
 }

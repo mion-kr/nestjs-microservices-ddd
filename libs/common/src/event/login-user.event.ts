@@ -1,10 +1,13 @@
 import { ReqId } from '@app/common';
+import { ReqIdLoggingInterface } from '../interface/req-id.logging.interface';
 
-export class LoginUserEvent {
+export class LoginUserEvent implements ReqIdLoggingInterface {
   id: string;
   reqId: ReqId;
+
   constructor(params: { id: string; reqId: ReqId }) {
-    this.id = params.id;
-    this.reqId = params.reqId;
+    const { id, reqId } = params ?? {};
+    this.id = id;
+    this.reqId = reqId;
   }
 }

@@ -41,7 +41,7 @@ export class CreateCommandHandler
 
     this.publishEvent(user);
 
-    return user.getId();
+    return user.id;
   }
 
   /**
@@ -113,7 +113,7 @@ export class CreateCommandHandler
      * => 결국 비동기로 실행되는데, 디버그 포인트 찍으면 동기처럼 실행되는 것처럼 보임
      */
 
-    user.apply(new CreatedUserEvent(user.getId()));
+    user.apply(new CreatedUserEvent(user.id));
     user.commit();
   }
 }

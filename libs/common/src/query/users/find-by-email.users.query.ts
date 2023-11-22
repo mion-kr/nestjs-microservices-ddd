@@ -1,11 +1,13 @@
 import { ReqId } from '../../domain';
+import { ReqIdLoggingInterface } from '../../interface/req-id.logging.interface';
 
-export class FindByEmailUsersQuery {
+export class FindByEmailUsersQuery implements ReqIdLoggingInterface {
   email: string;
   reqId: ReqId;
 
   constructor(params: { email: string; reqId?: ReqId }) {
-    this.email = params.email;
-    this.reqId = params?.reqId;
+    const { email, reqId } = params ?? {};
+    this.email = email;
+    this.reqId = reqId;
   }
 }

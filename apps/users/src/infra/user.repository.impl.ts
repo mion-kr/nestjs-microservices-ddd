@@ -13,24 +13,24 @@ export class UserRepositoryImpl implements UserRepository {
   async save(user: User): Promise<void> {
     await this.prismaService.user.upsert({
       create: {
-        id: user.getId().toString(),
-        email: user.getEmail(),
-        password: user.getPassword(),
-        nickName: user.getNickName(),
-        createBy: user.getCreateBy(),
-        createdAt: user.getCreatedAt().toDate(),
+        id: user.id.toString(),
+        email: user.email,
+        password: user.password,
+        nickName: user.nickName,
+        createBy: user.createBy,
+        createdAt: user.createdAt.toDate(),
       },
       update: {
-        email: user.getEmail(),
-        password: user.getPassword(),
-        nickName: user.getNickName(),
-        lastLoginDate: user?.getLastLoginDate()?.toDate(),
-        signOutDate: user?.getSignOutDate()?.toDate(),
-        updateBy: user.getUpdateBy(),
-        updatedAt: user.getUpdatedAt().toDate(),
+        email: user.email,
+        password: user.password,
+        nickName: user.nickName,
+        lastLoginDate: user?.lastLoginDate?.toDate(),
+        signOutDate: user?.signOutDate?.toDate(),
+        updateBy: user.updateBy,
+        updatedAt: user.updatedAt.toDate(),
       },
       where: {
-        id: user.getId().toString(),
+        id: user.id.toString(),
       },
     });
   }

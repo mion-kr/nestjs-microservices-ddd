@@ -1,6 +1,6 @@
 export class UpdateUserLastLoginDateCommand {
-  id: string;
-  constructor(params: { id: string }) {
-    this.id = params.id;
+  idValue: string;
+  constructor(params: { idValue: string }) {
+    this.idValue = params.idValue;
   }
 }

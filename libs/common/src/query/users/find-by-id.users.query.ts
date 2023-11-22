@@ -1,11 +1,13 @@
 import { ReqId } from '../../domain';
+import { ReqIdLoggingInterface } from '../../interface';
 
-export class FindByIdUsersQuery {
+export class FindByIdUsersQuery implements ReqIdLoggingInterface {
   id: string;
   reqId: ReqId;
 
   constructor(params: { id: string; reqId?: ReqId }) {
-    this.id = params.id;
-    this.reqId = params?.reqId;
+    const { id, reqId } = params ?? {};
+    this.id = id;
+    this.reqId = reqId;
   }
 }

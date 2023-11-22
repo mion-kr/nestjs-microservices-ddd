@@ -6,5 +6,8 @@ export * from './decorators';
 export * from './domain';
 export * from './event';
 export * from './helper';
+export * from './interceptor';
+export * from './interface';
 export * from './logger';
+export * from './pipes';
 export * from './query';

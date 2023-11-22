@@ -6,6 +6,7 @@ import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
 @Controller()
 @UseInterceptors(TcpLoggingInterceptor)
+// @UsePipes(CommonMsaValidateFunction)
 @UseGuards(JwtAuthGuard)
 export class AuthMsaController {
   @MessagePattern(Auth_SERVICE_METHOD.AUTHENTICATE)

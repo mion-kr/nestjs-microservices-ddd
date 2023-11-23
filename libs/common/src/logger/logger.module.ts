@@ -42,6 +42,8 @@ import { nanoid } from 'nanoid';
                 'sec-fetch-site': undefined,
                 'sec-ch-ua-platform': undefined,
                 'accept-language': undefined,
+                'postman-token': undefined,
+                'cache-control': undefined,
               },
               body: req.body,
             };

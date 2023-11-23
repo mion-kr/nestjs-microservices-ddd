@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { nanoid } from 'nanoid';
 import { PinoLogger } from 'nestjs-pino';
-import { Observable, tap } from 'rxjs';
+import { Observable, catchError, tap, throwError } from 'rxjs';
 
 /**
  * Pino Logger는 기본적으로 http 환경에서만 동작합니다.
@@ -51,12 +51,30 @@ export class TcpLoggingInterceptor implements NestInterceptor {
             res: res,
             responseTime: Date.now() - now,
           },
-          `gRPC method ${className}::${method} executed in ${
-            Date.now() - now
-          }ms`,
+          `gRPC [${className}::${method}] executed in ${Date.now() - now}ms`,
           contextName,
         );
       }),
+      catchError((error) => {
+        const res = {
+          data: JSON.stringify(error),
+        };
+
+        this.logger.error(
+          {
+            req: req,
+
+            res: res,
+            responseTime: Date.now() - now,
+          },
+          `gRPC [${className}::${method}] - error[${
+            error.message
+          }] executed in ${Date.now() - now}ms`,
+          contextName,
+        );
+
+        return throwError(() => error);
+      }), // 에러가 발생하면 여기서 처리합니다.
     );
   }
 }

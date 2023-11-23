@@ -2,6 +2,7 @@ import {
   CommonValidateFunction,
   CurrentReqId,
   CurrentUser,
+  HttpExceptionFilter,
   LoginUserEvent,
   ReqId,
   UserView,
@@ -11,6 +12,7 @@ import {
   Get,
   Post,
   Res,
+  UseFilters,
   UseGuards,
   UsePipes,
 } from '@nestjs/common';
@@ -20,6 +22,7 @@ import { CreateUserJwtTokenCommand } from '../command/impl/create-user-jwt-token
 import { LocalAuthGuards } from '../guards/local-auth.guard';
 
 @Controller('auth')
+@UseFilters(HttpExceptionFilter)
 @UsePipes(CommonValidateFunction)
 export class AuthController {
   constructor(

@@ -5,6 +5,8 @@ export * from './database';
 export * from './decorators';
 export * from './domain';
 export * from './event';
+export * from './exception';
+export * from './filter';
 export * from './helper';
 export * from './interceptor';
 export * from './interface';

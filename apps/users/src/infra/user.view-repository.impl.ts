@@ -29,7 +29,7 @@ export class UserViewRepositoryImpl implements UserViewRepository {
   }
 
   async findByEmail(email: string): Promise<UserView> {
-    const savedUser = await this.prismaService.user.findUnique({
+    const savedUser = await this.prismaService.user.findFirst({
       where: {
         email: email,
         deletedAt: null,
@@ -41,7 +41,7 @@ export class UserViewRepositoryImpl implements UserViewRepository {
   }
 
   async findByNickName(nickName: string): Promise<UserView> {
-    const savedUser = await this.prismaService.user.findUnique({
+    const savedUser = await this.prismaService.user.findFirst({
       where: {
         nickName: nickName,
         deletedAt: null,

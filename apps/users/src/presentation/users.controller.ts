@@ -1,6 +1,7 @@
 import {
   CommonValidateFunction,
   CurrentUser,
+  HttpExceptionFilter,
   IsPublic,
   JwtAuthGuard,
   UserView,
@@ -13,6 +14,7 @@ import {
   Logger,
   Patch,
   Post,
+  UseFilters,
   UseGuards,
   UsePipes,
 } from '@nestjs/common';
@@ -24,8 +26,10 @@ import { ChangePasswordUsersCommand } from '../command/impl/change-password.user
 import { CreateUsersCommand } from '../command/impl/create.users.command';
 import { ChangeInfoUsersDto } from './dto/change-info.users.dto';
 import { ChangePasswordUsersDto } from './dto/change-password.users.dto';
+import { CreateUsersDto } from './dto/create.users.dto';
 
 @Controller('users')
+@UseFilters(HttpExceptionFilter)
 @UsePipes(CommonValidateFunction)
 @UseGuards(JwtAuthGuard)
 export class UsersController {
@@ -78,9 +82,9 @@ export class UsersController {
 
   @IsPublic()
   @Post()
-  async create(@Body() command: CreateUsersCommand) {
+  async create(@Body() dto: CreateUsersDto) {
     const userId: UserId = await this.commandBus.execute<CreateUsersCommand>(
-      command,
+      new CreateUsersCommand(dto),
     );
     return userId.toString();
   }

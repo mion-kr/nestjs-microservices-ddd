@@ -13,8 +13,8 @@ datasource db {
 
 model User {
   id        String      @id 
-  email     String   @unique()
-  nickName  String @unique @map("nick_name")
+  email     String 
+  nickName  String @map("nick_name")
   password  String
   signOutDate DateTime? @map("sign_out_date")
   lastLoginDate DateTime? @map("last_login_date")

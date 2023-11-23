@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { IsNotMatchPasswordException } from '../../exception/is-not-match-password.exception';
+import { IsNotMatchPasswordException } from '../../../../../libs/common/src/exception/is-not-match-password.exception';
 import { NotFoundUserException } from '../../exception/not-found-user.exception';
 import { UserRepositoryImpl } from '../../infra/user.repository.impl';
 import { UserId } from '../domain/entities/user.id';

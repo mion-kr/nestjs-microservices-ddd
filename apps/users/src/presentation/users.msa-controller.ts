@@ -2,18 +2,25 @@ import {
   CommonMsaValidateFunction,
   FindByEmailUsersQuery,
   FindByIdUsersQuery,
+  HttpToRpcExceptionFilter,
   LoginUserEvent,
   TcpLoggingInterceptor,
   USER_SERVICE_METHOD,
   UserMatchPasswordQuery,
   UserView,
 } from '@app/common';
-import { Controller, UseInterceptors, UsePipes } from '@nestjs/common';
+import {
+  Controller,
+  UseFilters,
+  UseInterceptors,
+  UsePipes,
+} from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
 import { UpdateUserLastLoginDateCommand } from '../command/impl/update-user-last-login-date.command';
 
 @Controller()
+@UseFilters(HttpToRpcExceptionFilter)
 @UseInterceptors(TcpLoggingInterceptor)
 @UsePipes(CommonMsaValidateFunction)
 export class UsersMsaController {

@@ -26,8 +26,10 @@ export class UserRepositoryImpl implements UserRepository {
         nickName: user.nickName,
         lastLoginDate: user?.lastLoginDate?.toDate(),
         signOutDate: user?.signOutDate?.toDate(),
-        updateBy: user.updateBy,
-        updatedAt: user.updatedAt.toDate(),
+        updateBy: user?.updateBy,
+        updatedAt: user?.updatedAt?.toDate(),
+        deleteBy: user?.deleteBy,
+        deletedAt: user?.deletedAt?.toDate(),
       },
       where: {
         id: user.id.toString(),
@@ -47,7 +49,7 @@ export class UserRepositoryImpl implements UserRepository {
   }
 
   async findByEmail(email: string): Promise<User> {
-    const savedUser = await this.prismaService.user.findUnique({
+    const savedUser = await this.prismaService.user.findFirst({
       where: {
         email: email,
         deletedAt: null,
@@ -58,13 +60,20 @@ export class UserRepositoryImpl implements UserRepository {
   }
 
   private async convertToDomain(prismaUser: PrismaUser): Promise<User> {
+    if (!prismaUser) return undefined;
     return await User.create({
       ...prismaUser,
 
       id: UserId.create(prismaUser),
-      createdAt: dayjs(prismaUser.createdAt),
-      updatedAt: dayjs(prismaUser.updatedAt),
-      deletedAt: dayjs(prismaUser.deletedAt),
+      createdAt: prismaUser?.createdAt
+        ? dayjs(prismaUser.createdAt)
+        : undefined,
+      updatedAt: prismaUser?.updatedAt
+        ? dayjs(prismaUser.updatedAt)
+        : undefined,
+      deletedAt: prismaUser?.deletedAt
+        ? dayjs(prismaUser.deletedAt)
+        : undefined,
     });
   }
 }

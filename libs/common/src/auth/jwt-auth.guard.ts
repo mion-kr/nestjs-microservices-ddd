@@ -11,6 +11,7 @@ import { Auth_SERVICE_METHOD } from '../constants';
 import { AUTH_SERVICE } from '../constants/services';
 import { publicKey } from '../decorators';
 import { ReqId } from '../domain';
+import { JwtEmptyException } from '../exception/jwt-empty.exception';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
@@ -26,7 +27,8 @@ export class JwtAuthGuard implements CanActivate {
     if (isPublic) return true;
 
     const jwt = context.switchToHttp().getRequest().cookies?.Authentication;
-    if (!jwt) return false;
+    // if (!jwt) return false;
+    if (!jwt) throw new JwtEmptyException();
 
     const reqId = context.switchToHttp().getRequest().id;
 

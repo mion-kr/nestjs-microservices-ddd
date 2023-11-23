@@ -8,6 +8,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
+import { IsNotMatchPasswordException } from '../../../../libs/common/src/exception/is-not-match-password.exception';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
@@ -21,13 +22,14 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   async validate(req, email: string, password: string) {
     try {
       const reqId = ReqId.of(req.id);
+
       const isMatched = await this.queryBus.execute<
         UserMatchPasswordQuery,
         boolean
       >(new UserMatchPasswordQuery({ email, password, reqId }));
 
       if (!isMatched) {
-        throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
+        throw new IsNotMatchPasswordException();
       }
 
       const user = await this.queryBus.execute<FindByEmailUsersQuery, UserView>(

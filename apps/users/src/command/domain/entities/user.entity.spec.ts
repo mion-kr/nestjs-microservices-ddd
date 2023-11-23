@@ -1,5 +1,5 @@
 import * as dayjs from 'dayjs';
-import { IsNotMatchPasswordException } from '../../../exception/is-not-match-password.exception';
+import { IsNotMatchPasswordException } from '../../../../../../libs/common/src/exception/is-not-match-password.exception';
 import { User } from './user.entity';
 import { UserId } from './user.id';
 

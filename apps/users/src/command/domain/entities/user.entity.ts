@@ -8,8 +8,8 @@ import {
   IsStrongPassword,
 } from 'class-validator';
 import * as dayjs from 'dayjs';
+import { IsNotMatchPasswordException } from '../../../../../../libs/common/src/exception/is-not-match-password.exception';
 import { CanceledUserEvent } from '../../../event/impl/canceled.user.event';
-import { IsNotMatchPasswordException } from '../../../exception/is-not-match-password.exception';
 import { UserId } from './user.id';
 
 export class User extends AbstractEntity {

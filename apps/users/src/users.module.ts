@@ -16,6 +16,7 @@ import { UsersSaga } from './sagas/users.saga';
     LoggerModule,
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: '.env.test',
       validationSchema: Joi.object({
         DATABASE_URL: Joi.string().required(),
         HTTP_PORT: Joi.number().required(),

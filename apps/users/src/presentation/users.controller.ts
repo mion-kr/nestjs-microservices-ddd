@@ -2,6 +2,7 @@ import {
   CommonValidateFunction,
   CurrentUser,
   HttpExceptionFilter,
+  HttpLoggingInterceptor,
   IsPublic,
   JwtAuthGuard,
   UserView,
@@ -16,6 +17,7 @@ import {
   Post,
   UseFilters,
   UseGuards,
+  UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -29,6 +31,7 @@ import { ChangePasswordUsersDto } from './dto/change-password.users.dto';
 import { CreateUsersDto } from './dto/create.users.dto';
 
 @Controller('users')
+@UseInterceptors(HttpLoggingInterceptor)
 @UseFilters(HttpExceptionFilter)
 @UsePipes(CommonValidateFunction)
 @UseGuards(JwtAuthGuard)
@@ -42,6 +45,11 @@ export class UsersController {
 
   @Get('/my-info')
   async findById(@CurrentUser() user: UserView) {
+    return user;
+  }
+
+  @Get('/my-info/:test')
+  async findByIdTest(@CurrentUser() user: UserView) {
     return user;
   }
 

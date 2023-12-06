@@ -7,6 +7,7 @@ import { nanoid } from 'nanoid';
   imports: [
     PinoLoggerModule.forRoot({
       pinoHttp: {
+        autoLogging: false,
         level: process.env.NODE_ENV !== 'production' ? 'debug' : 'info',
 
         genReqId: function (req, res) {
@@ -27,6 +28,7 @@ import { nanoid } from 'nanoid';
               url: req.url,
               query: req.query,
               params: req.params,
+              path: req.path,
               headers: {
                 ...(req?.raw?.headers ?? req?.headers),
                 // 로그에 표시하지 않을 헤더 셋팅

@@ -1,9 +1,15 @@
-import { LoggerModule } from '@app/common';
+import {
+  AUTH_SERVICE,
+  DatabaseModule,
+  LoggerModule,
+  USER_SERVICE,
+} from '@app/common';
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { CqrsModule } from '@nestjs/cqrs';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import * as Joi from 'joi';
-import { PostsController } from './posts.controller';
-import { PostsService } from './posts.service';
+import { PostsController } from './presentation/posts.controller';
 
 @Module({
   imports: [
@@ -20,8 +26,37 @@ import { PostsService } from './posts.service';
         USER_TCP_PORT: Joi.number().required(),
       }),
     }),
+
+    CqrsModule,
+    DatabaseModule,
+
+    ClientsModule.registerAsync([
+      {
+        name: AUTH_SERVICE,
+        inject: [ConfigService],
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.TCP,
+          options: {
+            host: configService.get('AUTH_HOST'),
+            port: +configService.get('AUTH_TCP_PORT'),
+          },
+        }),
+      },
+      {
+        name: USER_SERVICE,
+        inject: [ConfigService],
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.TCP,
+          options: {
+            host: configService.get('USER_HOST'),
+            port: +configService.get('USER_TCP_PORT'),
+          },
+        }),
+      },
+      ,
+    ]),
   ],
   controllers: [PostsController],
-  providers: [PostsService],
+  // providers: [CommandHandlers, QueryHandlers, EventHandlers],
 })
 export class PostsModule {}

@@ -21,7 +21,7 @@ import {
   UsePipes,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { UserId } from '../command/domain/entities/user.id';
+import { UserId } from '../../../../libs/common/src/cqrs/command/users/user.id';
 import { CancelUsersCommand } from '../command/impl/cancel.users.command';
 import { ChangeInfoUsersCommand } from '../command/impl/change-info.users.command';
 import { ChangePasswordUsersCommand } from '../command/impl/change-password.users.command';

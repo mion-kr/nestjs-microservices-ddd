@@ -7,11 +7,10 @@ import {
 import { Reflector } from '@nestjs/core';
 import { ClientProxy } from '@nestjs/microservices';
 import { Observable, catchError, map, of, tap } from 'rxjs';
-import { Auth_SERVICE_METHOD } from '../constants';
-import { AUTH_SERVICE } from '../constants/services';
+import { AUTH_SERVICE, Auth_SERVICE_METHOD } from '../constants';
+import { ReqId } from '../cqrs';
 import { publicKey } from '../decorators';
-import { ReqId } from '../domain';
-import { JwtEmptyException } from '../exception/jwt-empty.exception';
+import { JwtEmptyException } from '../exception';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {

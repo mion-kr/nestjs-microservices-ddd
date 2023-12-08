@@ -21,6 +21,6 @@ export class MatchPasswordUserQueryHandler
   async execute(command: UserMatchPasswordQuery): Promise<boolean> {
     const user = await this.userRepository.findByEmail(command.email);
     if (!user) throw new NotFoundUserException();
-    return await user.matchPassword(command.password);
+    return await user.isMatchPassword(command.password);
   }
 }

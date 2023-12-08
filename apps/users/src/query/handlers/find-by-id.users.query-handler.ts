@@ -1,6 +1,6 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
+import { UserId } from '../../../../../libs/common/src/cqrs/command/users/user.id';
 import { FindByIdUsersQuery } from '../../../../../libs/common/src/query/users/find-by-id.users.query';
-import { UserId } from '../../command/domain/entities/user.id';
 import { UserViewRepositoryImpl } from '../../infra/user.view-repository.impl';
 import { UserViewRepository } from '../domain/user.view-repository';
 
@@ -16,6 +16,6 @@ export class FindByIdUsersQueryHandler
   }
 
   async execute(query: FindByIdUsersQuery): Promise<any> {
-    return await this.userRepository.findById(UserId.create(query));
+    return await this.userRepository.findById(UserId.of(query));
   }
 }

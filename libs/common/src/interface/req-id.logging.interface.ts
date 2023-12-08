@@ -1,5 +1,4 @@
-import { ReqId } from '../domain';
-
+import { ReqId } from '@app/common';
 export interface ReqIdLoggingInterface {
   reqId: ReqId;
 }

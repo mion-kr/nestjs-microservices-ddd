@@ -6,6 +6,7 @@ import {
 } from '@nestjs/cqrs';
 import * as dayjs from 'dayjs';
 import { nanoid } from 'nanoid';
+import { UserId } from '../../../../../libs/common/src/cqrs/command/users/user.id';
 import { FindByEmailUsersQuery } from '../../../../../libs/common/src/query/users/find-by-email.users.query';
 import { CreatedUserEvent } from '../../event/impl/created.user.event';
 import { DuplicateEmailException } from '../../exception/duplicate-email.exception';
@@ -14,7 +15,6 @@ import { NotFoundUserException } from '../../exception/not-found-user.exception'
 import { UserRepositoryImpl } from '../../infra/user.repository.impl';
 import { FindByNicknameUsersQuery } from '../../query/impl/find-by-nickname.users.query';
 import { User } from '../domain/entities/user.entity';
-import { UserId } from '../domain/entities/user.id';
 import { UserRepository } from '../domain/repository/user.repository';
 import { CreateUsersCommand } from '../impl/create.users.command';
 
@@ -96,7 +96,7 @@ export class CreateCommandHandler
     const user = this.eventPublisher.mergeObjectContext(
       await User.create({
         ...command,
-        id: UserId.create({ id }),
+        id: UserId.of({ id }),
         createBy: id,
         createdAt: dayjs(),
       }),

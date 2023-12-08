@@ -1,4 +1,4 @@
-import { ReqId } from '../../domain';
+import { ReqId } from '@app/common';
 import { ReqIdLoggingInterface } from '../../interface';
 
 export class FindByIdUsersQuery implements ReqIdLoggingInterface {

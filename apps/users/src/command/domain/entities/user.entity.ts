@@ -1,4 +1,10 @@
-import { AbstractEntity } from '@app/common';
+import {
+  AbstractEntity,
+  IsNotMatchPasswordException,
+  PrivateSetProperty,
+  UserId,
+} from '@app/common';
+import { User as PrismaUser } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 import { Expose } from 'class-transformer';
 import {
@@ -8,70 +14,64 @@ import {
   IsStrongPassword,
 } from 'class-validator';
 import * as dayjs from 'dayjs';
-import { IsNotMatchPasswordException } from '../../../../../../libs/common/src/exception/is-not-match-password.exception';
 import { CanceledUserEvent } from '../../../event/impl/canceled.user.event';
-import { UserId } from './user.id';
 
 export class User extends AbstractEntity {
   private _id: UserId;
 
   @Expose({ name: 'email' })
+  @PrivateSetProperty
   private _email: string;
 
   @Expose({ name: 'nickName' })
+  @PrivateSetProperty
   private _nickName: string;
 
   @Expose({ name: 'password' })
+  @PrivateSetProperty
   private _password: string;
 
+  @PrivateSetProperty
   private _signOutDate: dayjs.Dayjs;
+
+  @PrivateSetProperty
   private _lastLoginDate: dayjs.Dayjs;
 
   /**
    * 도메인 객체 생성
    */
-  static async create(params: {
-    id: UserId;
-    email: string;
-    nickName: string;
-    password: string;
+  static async create(
+    params: {
+      id: UserId;
 
-    createBy: string;
-    createdAt: dayjs.Dayjs;
-    updateBy?: string;
-    updatedAt?: dayjs.Dayjs;
-    deleteBy?: string;
-    deletedAt?: dayjs.Dayjs;
-  }) {
-    const {
-      id,
-      email,
-      nickName,
-      password,
-      createBy,
-      createdAt,
-      updateBy,
-      updatedAt,
-      deleteBy,
-      deletedAt,
-    } = params;
-    const entity = new User();
-    entity.setId(id);
+      createBy: string;
+      createdAt: dayjs.Dayjs;
+      updateBy?: string;
+      updatedAt?: dayjs.Dayjs;
+      deleteBy?: string;
+      deletedAt?: dayjs.Dayjs;
+    } & Omit<
+      PrismaUser,
+      | 'id'
+      | 'createdAt'
+      | 'updatedAt'
+      | 'deletedAt'
+      | 'updateBy'
+      | 'deleteBy'
+      | 'lastLoginDate'
+      | 'signOutDate'
+    >,
+  ) {
+    const { password } = params;
+
+    const entity = Object.assign(new this(), params);
+
     await entity.setPassword(password);
-    entity._email = email;
-    entity._nickName = nickName;
-
-    entity._createBy = createBy;
-    entity._createdAt = createdAt;
-    entity._updateBy = updateBy;
-    entity._updatedAt = updatedAt;
-    entity._deleteBy = deleteBy;
-    entity._deletedAt = deletedAt;
 
     return entity;
   }
 
-  private setId(id: UserId) {
+  private set id(id: UserId) {
     if (!id) throw Error(`회원 정보 id는 필수 값 입니다.`);
     this._id = id;
   }
@@ -107,7 +107,7 @@ export class User extends AbstractEntity {
   async changePassword(params: { newPassword: string; oldPassword: string }) {
     const { newPassword, oldPassword } = params;
 
-    const isNotMatchPassword = !(await this.matchPassword(oldPassword));
+    const isNotMatchPassword = !(await this.isMatchPassword(oldPassword));
     if (isNotMatchPassword) throw new IsNotMatchPasswordException();
 
     await this.setPassword(newPassword);
@@ -116,7 +116,7 @@ export class User extends AbstractEntity {
   /**
    * 비밀번호 일치 여부
    */
-  async matchPassword(password: string): Promise<boolean> {
+  async isMatchPassword(password: string): Promise<boolean> {
     return await bcrypt.compare(password, this._password);
   }
 
@@ -126,11 +126,6 @@ export class User extends AbstractEntity {
   async updateLastLoginDate() {
     this._lastLoginDate = dayjs();
   }
-
-  /**
-   * 포스트 도메인 객체 생성
-   */
-  async createPost() {}
 
   get id(): UserId {
     return this._id;

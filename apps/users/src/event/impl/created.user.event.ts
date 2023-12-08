@@ -1,4 +1,4 @@
-import { UserId } from '../../command/domain/entities/user.id';
+import { UserId } from '../../../../../libs/common/src/cqrs/command/users/user.id';
 
 export class CreatedUserEvent {
   id: UserId;

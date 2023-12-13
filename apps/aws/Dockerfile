@@ -4,16 +4,27 @@ WORKDIR /usr/src/app
 
 COPY package.json ./
 COPY pnpm-lock.yaml ./
+COPY tsconfig.json tsconfig.json
+COPY nest-cli.json nest-cli.json
+COPY prisma ./prisma/
 
 RUN npm install -g pnpm
 
 # RUN pnpm install
-RUN pnpm install --frozen-lockfile
+#RUN pnpm install --frozen-lockfile
 
 # node_modules 파일을 제외하기 위해선 .dockerignore 파일을 사용해야 합니다.
-COPY . .
+# COPY . .
 
-RUN pnpm run build
+COPY apps/aws apps/aws
+COPY libs libs
+
+
+RUN pnpm install -r --frozen-lockfile 
+
+RUN npx prisma generate
+
+RUN pnpm run build aws
 
 # ---
 FROM node:alpine as production

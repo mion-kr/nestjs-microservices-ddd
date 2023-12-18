@@ -1,4 +1,4 @@
-import { CommandRepository } from '../../../../../../libs/common/src';
+import { CommandRepository } from '@app/common';
 import { Post } from '../entities/post.entity';
 import { PostId } from '../entities/post.id';
 

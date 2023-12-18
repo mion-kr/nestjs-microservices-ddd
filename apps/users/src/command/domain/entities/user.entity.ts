@@ -16,9 +16,7 @@ import {
 import * as dayjs from 'dayjs';
 import { CanceledUserEvent } from '../../../event/impl/canceled.user.event';
 
-export class User extends AbstractEntity {
-  private _id: UserId;
-
+export class User extends AbstractEntity<User, UserId> {
   @Expose({ name: 'email' })
   @PrivateSetProperty
   private _email: string;
@@ -69,6 +67,10 @@ export class User extends AbstractEntity {
     await entity.setPassword(password);
 
     return entity;
+  }
+
+  equals(otherObj: User): boolean {
+    return this._id.id === otherObj.id.id;
   }
 
   private set id(id: UserId) {

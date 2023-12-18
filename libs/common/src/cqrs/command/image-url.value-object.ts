@@ -1,16 +1,16 @@
 import { PrivateSetProperty } from '../../decorators';
 
-export class Image {
+export class ImageUrl {
   @PrivateSetProperty
-  private _imageUrl: string;
+  private _url: string;
 
-  static of(params: { imageUrl: string }): Image {
+  static of(params: { url: string }): ImageUrl {
     const image = Object.assign(new this(), params);
 
     return image;
   }
 
-  get imageUrl(): string {
-    return this._imageUrl;
+  get url(): string {
+    return this._url;
   }
 }

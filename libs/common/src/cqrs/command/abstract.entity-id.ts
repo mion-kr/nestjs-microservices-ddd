@@ -17,4 +17,8 @@ export class AbstractEntityId {
   toString(): string {
     return this._id;
   }
+
+  equals(entityId: AbstractEntityId): boolean {
+    return this._id === entityId.id;
+  }
 }

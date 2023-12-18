@@ -27,6 +27,18 @@
       "remoteRoot": "/usr/src/app",
       "localRoot": "${workspaceFolder}"
       // "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "debug:posts",
+      "address": "localhost",
+      "port": 19231,
+      "sourceMaps": true,
+      "restart": true,
+      "remoteRoot": "/usr/src/app",
+      "localRoot": "${workspaceFolder}"
+      // "skipFiles": ["<node_internals>/**"]
     }
   ]
 }

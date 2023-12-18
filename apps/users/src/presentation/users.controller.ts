@@ -48,11 +48,6 @@ export class UsersController {
     return user;
   }
 
-  @Get('/my-info/:test')
-  async findByIdTest(@CurrentUser() user: UserView) {
-    return user;
-  }
-
   @Patch('/my-info')
   async changeInfo(
     @CurrentUser() user: UserView,

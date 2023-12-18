@@ -13,6 +13,7 @@ import { Observable, catchError, tap, throwError } from 'rxjs';
 @Injectable()
 export class HttpLoggingInterceptor implements NestInterceptor {
   private readonly type = 'http';
+
   constructor(private readonly logger: PinoLogger) {}
   intercept(
     context: ExecutionContext,

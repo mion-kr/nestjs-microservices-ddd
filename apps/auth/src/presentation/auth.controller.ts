@@ -3,6 +3,7 @@ import {
   CurrentReqId,
   CurrentUser,
   HttpExceptionFilter,
+  HttpLoggingInterceptor,
   LoginUserEvent,
   ReqId,
   UserView,
@@ -14,6 +15,7 @@ import {
   Res,
   UseFilters,
   UseGuards,
+  UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
 import { CommandBus, EventBus } from '@nestjs/cqrs';
@@ -22,6 +24,7 @@ import { CreateUserJwtTokenCommand } from '../command/impl/create-user-jwt-token
 import { LocalAuthGuards } from '../guards/local-auth.guard';
 
 @Controller('auth')
+@UseInterceptors(HttpLoggingInterceptor)
 @UseFilters(HttpExceptionFilter)
 @UsePipes(CommonValidateFunction)
 export class AuthController {

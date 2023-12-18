@@ -9,7 +9,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CqrsModule } from '@nestjs/cqrs';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import * as Joi from 'joi';
+import { CommandHandlers } from './command/handlers';
+import { EventHandlers } from './event/handlers';
+import { Infra } from './infra';
 import { PostsController } from './presentation/posts.controller';
+import { QueryHandlers } from './query/handlers';
 
 @Module({
   imports: [
@@ -57,6 +61,6 @@ import { PostsController } from './presentation/posts.controller';
     ]),
   ],
   controllers: [PostsController],
-  // providers: [CommandHandlers, QueryHandlers, EventHandlers],
+  providers: [...CommandHandlers, ...QueryHandlers, ...EventHandlers, ...Infra],
 })
 export class PostsModule {}

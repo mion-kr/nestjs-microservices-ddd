@@ -1,13 +1,23 @@
-import { AbstractEntity, Image, PrivateSetProperty, UserId } from '@app/common';
+import {
+  AbstractEntity,
+  EntityEquals,
+  ImageUrl,
+  PrivateSetProperty,
+  UserId,
+} from '@app/common';
 import { Post as PrismaPost } from '@prisma/client';
 import { Expose } from 'class-transformer';
+import { IsNotEmpty, IsString } from 'class-validator';
 import * as dayjs from 'dayjs';
+import { AlreadyLikedUserException } from '../../../exception/already-liked-user.exception';
+import { NotLikedUserException } from '../../../exception/not-liked-user.exception';
 import { NotMatchUserException } from '../../../exception/not-match-user.exception';
 import { PostId } from './post.id';
 
-export class Post extends AbstractEntity {
-  private _id: PostId;
-
+export class Post
+  extends AbstractEntity<Post, PostId>
+  implements EntityEquals<Post>
+{
   @Expose({ name: 'writer' })
   @PrivateSetProperty
   private _writer: UserId;
@@ -22,7 +32,7 @@ export class Post extends AbstractEntity {
 
   @Expose({ name: 'images' })
   @PrivateSetProperty
-  private _images: Image[];
+  private _images: ImageUrl[];
 
   @Expose({ name: 'likeUserIds' })
   @PrivateSetProperty
@@ -40,28 +50,38 @@ export class Post extends AbstractEntity {
   static async create(
     params: {
       id: PostId;
-
-      likeUserIds: string;
+      writer: UserId;
+      likeUserIds?: UserId[];
+      images: ImageUrl[];
+      isUse: boolean;
       createBy: string;
       createdAt: dayjs.Dayjs;
       updateBy?: string;
       updatedAt?: dayjs.Dayjs;
       deleteBy?: string;
       deletedAt?: dayjs.Dayjs;
-    } & Omit<
-      PrismaPost,
-      | 'id'
-      | 'createdAt'
-      | 'updatedAt'
-      | 'deletedAt'
-      | 'updateBy'
-      | 'deleteBy'
-      | 'likeUserIds'
-    >,
+    } & Pick<PrismaPost, 'title' | 'content' | 'isUse'>,
+    // & Omit<
+    //   PrismaPost,
+    //   | 'id'
+    //   | 'createdAt'
+    //   | 'updatedAt'
+    //   | 'deletedAt'
+    //   | 'updateBy'
+    //   | 'deleteBy'
+    //   | 'imageUrls'
+    //   | 'likeUserIds'
+    // >,
   ) {
     const entity = Object.assign(new this(), params);
+    entity.likeUserIds = params.likeUserIds ?? [];
 
     return entity;
+  }
+
+  private set id(id: PostId) {
+    if (!id) throw Error(`포스트 id는 필수 값 입니다.`);
+    this._id = id;
   }
 
   /**
@@ -69,22 +89,22 @@ export class Post extends AbstractEntity {
    * @param params
    */
   async editPost(params: {
-    title: string;
-    content: string;
-    images: Image[];
-    isUse: boolean;
+    title?: string;
+    content?: string;
+    images?: ImageUrl[];
+    isUse?: boolean;
     updateBy: string;
   }) {
     const { title, content, images, isUse, updateBy } = params;
 
-    if (this.isMatchWriter(UserId.of({ id: updateBy }))) {
+    if (!this.isMatchWriter(UserId.of({ id: updateBy }))) {
       throw new NotMatchUserException();
     }
 
-    this._title = title;
-    this._content = content;
-    this._images = images;
-    this._isUse = isUse;
+    this._title = title ?? this._title;
+    this._content = content ?? this._content;
+    this._images = images ?? this._images;
+    this._isUse = isUse ?? this._isUse;
   }
 
   /**
@@ -94,7 +114,7 @@ export class Post extends AbstractEntity {
   async changeIsUse(params: { isUse: boolean; updateBy: string }) {
     const { isUse, updateBy } = params;
 
-    if (this.isMatchWriter(UserId.of({ id: updateBy }))) {
+    if (!this.isMatchWriter(UserId.of({ id: updateBy }))) {
       throw new NotMatchUserException();
     }
 
@@ -107,7 +127,7 @@ export class Post extends AbstractEntity {
   async remove(params: { deleteBy: string }) {
     const { deleteBy } = params;
 
-    if (this.isMatchWriter(UserId.of({ id: deleteBy }))) {
+    if (!this.isMatchWriter(UserId.of({ id: deleteBy }))) {
       throw new NotMatchUserException();
     }
 
@@ -121,6 +141,7 @@ export class Post extends AbstractEntity {
    */
   async persistentRemove() {
     // TODO :: 이미지 삭제 이벤트 추가
+    // this.apply()
     // S3 업로드된 이미지 삭제, 포스트, 댓글 삭제
 
     super.commit();
@@ -130,30 +151,34 @@ export class Post extends AbstractEntity {
    * 포스트 좋아요 추가
    * @param params
    */
-  async addLike(params: { userId: string }) {
+  async addLike(params: { userId: UserId }) {
     const { userId } = params;
 
-    if (this._likeUserIds.includes(UserId.of({ id: userId }))) {
-      throw new Error(`이미 좋아요를 누른 사용자 입니다.`);
+    if (this.getLikedUserByUserId(userId)) {
+      throw new AlreadyLikedUserException(this.id, userId);
     }
 
-    this._likeUserIds.push(UserId.of({ id: userId }));
+    this._likeUserIds.push(userId);
   }
 
   /**
    * 포스트 좋아요 삭제
    * @param params
    */
-  async removeLike(params: { userId: string }) {
+  async removeLike(params: { userId: UserId }) {
     const { userId } = params;
 
-    if (!this._likeUserIds.includes(UserId.of({ id: userId }))) {
-      throw new Error(`좋아요를 누르지 않은 사용자 입니다.`);
+    if (!this.getLikedUserByUserId(userId)) {
+      throw new NotLikedUserException(this._id, userId);
     }
 
     this._likeUserIds = this._likeUserIds.filter(
-      (likeUserId) => likeUserId.toString() !== userId,
+      (likeUserId) => !likeUserId.equals(userId),
     );
+  }
+
+  private getLikedUserByUserId(userId: UserId) {
+    return this._likeUserIds.find((likeUserId) => likeUserId.equals(userId));
   }
 
   /**
@@ -173,19 +198,27 @@ export class Post extends AbstractEntity {
     return this._writer;
   }
 
+  @IsString()
+  @IsNotEmpty()
   get title(): string {
     return this._title;
   }
 
+  @IsString()
   get content(): string {
     return this._content;
   }
 
-  get images(): Image[] {
+  @IsString({ each: true })
+  get images(): ImageUrl[] {
     return this._images;
   }
 
   get isUse(): boolean {
     return this._isUse;
+  }
+
+  get likeUserIds(): UserId[] {
+    return this._likeUserIds;
   }
 }

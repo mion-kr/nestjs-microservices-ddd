@@ -10,10 +10,16 @@ import { PayloadExceptionInterface } from '../interface';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
+  private readonly type = 'http';
+
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
   catch(exception: any, host: ArgumentsHost) {
     const { httpAdapter } = this.httpAdapterHost;
+
+    const type = host.getType();
+    if (type !== this.type) return;
+
     const ctx = host.switchToHttp();
 
     const payload: PayloadExceptionInterface =

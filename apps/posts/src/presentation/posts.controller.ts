@@ -9,6 +9,7 @@ import {
 import {
   Body,
   Controller,
+  Delete,
   Param,
   Patch,
   Post,
@@ -19,8 +20,10 @@ import {
 } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { PostId } from '../command/domain/entities/post.id';
+import { AddLikePostsCommand } from '../command/impl/add-like.posts.command';
 import { CreatePostsCommand } from '../command/impl/create.posts.command';
 import { EditPostsCommand } from '../command/impl/edit.posts.command';
+import { RemoveLikePostsCommand } from '../command/impl/remove-like.posts.command';
 import { CreatePostsDto } from './dto/create.posts.dto';
 import { EditPostsDto } from './dto/edit.posts.dto';
 
@@ -50,6 +53,31 @@ export class PostsController {
     const postId: PostId = await this.commandBus.execute<EditPostsCommand>(
       new EditPostsCommand({ ...dto, id: postIdValue, updateBy: user.id }),
     );
+
+    return postId.toString();
+  }
+
+  @Post(':postId/likes')
+  async addLike(
+    @Param('postId') postIdValue: string,
+    @CurrentUser() user: UserView,
+  ) {
+    const postId: PostId = await this.commandBus.execute<AddLikePostsCommand>(
+      new AddLikePostsCommand({ id: postIdValue, userId: user.id }),
+    );
+
+    return postId.toString();
+  }
+
+  @Delete(':postId/likes')
+  async removeLike(
+    @Param('postId') postIdValue: string,
+    @CurrentUser() user: UserView,
+  ) {
+    const postId: PostId =
+      await this.commandBus.execute<RemoveLikePostsCommand>(
+        new RemoveLikePostsCommand({ id: postIdValue, userId: user.id }),
+      );
 
     return postId.toString();
   }

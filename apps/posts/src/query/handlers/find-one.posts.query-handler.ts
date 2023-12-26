@@ -1,12 +1,13 @@
 import { IQueryHandler, QueryBus, QueryHandler } from '@nestjs/cqrs';
+import { PostId } from '../../command/domain/entities/post.id';
 import { PostViewRepositoryImpl } from '../../infra/post.view-repository.impl';
 import { PostViewRepository } from '../domain/post.view-repository';
 import { PostViewApplicationHelper } from '../helper/post.view-application-helper';
-import { FindAllPostsQuery } from '../impl/find-all.posts.query';
+import { FindOnePostsQuery } from '../impl/find-one.posts.query';
 
-@QueryHandler(FindAllPostsQuery)
-export class FindAllPostsQueryHandler
-  implements IQueryHandler<FindAllPostsQuery>
+@QueryHandler(FindOnePostsQuery)
+export class FindOnePostsQueryHandler
+  implements IQueryHandler<FindOnePostsQuery>
 {
   private readonly postViewRepository: PostViewRepository;
 
@@ -17,11 +18,13 @@ export class FindAllPostsQueryHandler
     this.postViewRepository = postViewRepositoryImpl;
   }
 
-  async execute(query: FindAllPostsQuery): Promise<any> {
-    const [datas, count] = await this.postViewRepository.findAll(query);
+  async execute(query: FindOnePostsQuery): Promise<any> {
+    const data = await this.postViewRepository.findById(
+      PostId.of({ id: query.postId }),
+    );
 
-    await PostViewApplicationHelper.setLikeUser(datas, query, this.queryBus);
+    await PostViewApplicationHelper.setLikeUser([data], query, this.queryBus);
 
-    return [datas, count];
+    return data;
   }
 }

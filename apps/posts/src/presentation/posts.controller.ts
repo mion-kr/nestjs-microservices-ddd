@@ -29,6 +29,7 @@ import { CreatePostsCommand } from '../command/impl/create.posts.command';
 import { EditPostsCommand } from '../command/impl/edit.posts.command';
 import { RemoveLikePostsCommand } from '../command/impl/remove-like.posts.command';
 import { FindAllPostsQuery } from '../query/impl/find-all.posts.query';
+import { FindOnePostsQuery } from '../query/impl/find-one.posts.query';
 import { CreatePostsDto } from './dto/create.posts.dto';
 import { EditPostsDto } from './dto/edit.posts.dto';
 import { FindAllPostsDto } from './dto/find-all.posts.dto';
@@ -51,6 +52,17 @@ export class PostsController {
     );
 
     return { posts, count };
+  }
+
+  @Get(':postId')
+  async findOne(
+    @Param('postId') postIdValue: string,
+    @CurrentReqId() reqId: ReqId,
+  ) {
+    const post = await this.queryBus.execute<FindOnePostsQuery>(
+      new FindOnePostsQuery({ postId: postIdValue, reqId }),
+    );
+    return post;
   }
 
   @Post()

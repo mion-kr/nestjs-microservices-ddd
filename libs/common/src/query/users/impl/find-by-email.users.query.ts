@@ -1,5 +1,5 @@
 import { ReqId } from '@app/common';
-import { ReqIdLoggingInterface } from '../../interface/req-id.logging.interface';
+import { ReqIdLoggingInterface } from '../../../interface/req-id.logging.interface';
 
 export class FindByEmailUsersQuery implements ReqIdLoggingInterface {
   email: string;

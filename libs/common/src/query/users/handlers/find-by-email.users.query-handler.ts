@@ -1,13 +1,10 @@
-import {
-  FindByEmailUsersQuery,
-  USER_SERVICE,
-  USER_SERVICE_METHOD,
-  UserView,
-} from '@app/common';
 import { Inject } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
+import { USER_SERVICE, USER_SERVICE_METHOD } from '../../../constants';
+import { UserView } from '../../../cqrs';
+import { FindByEmailUsersQuery } from '../impl';
 
 @QueryHandler(FindByEmailUsersQuery)
 export class FindByEmailUsersQueryHandler

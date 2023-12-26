@@ -2,6 +2,7 @@ import {
   CommonMsaValidateFunction,
   FindByEmailUsersQuery,
   FindByIdUsersQuery,
+  FindByIdsUsersQuery,
   HttpToRpcExceptionFilter,
   LoginUserEvent,
   TcpLoggingInterceptor,
@@ -35,6 +36,14 @@ export class UsersMsaController {
       new FindByIdUsersQuery(query),
     );
     return user;
+  }
+
+  @MessagePattern(USER_SERVICE_METHOD.FIND_BY_IDS)
+  async findByIds(@Payload() query: FindByIdsUsersQuery) {
+    const users: UserView[] = await this.queryBus.execute<FindByIdsUsersQuery>(
+      new FindByIdsUsersQuery(query),
+    );
+    return users;
   }
 
   @MessagePattern(USER_SERVICE_METHOD.FIND_BY_EMAIL)

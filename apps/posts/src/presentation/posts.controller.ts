@@ -1,31 +1,37 @@
 import {
   CommonValidateFunction,
+  CurrentReqId,
   CurrentUser,
   HttpExceptionFilter,
   HttpLoggingInterceptor,
   JwtAuthGuard,
+  ReqId,
   UserView,
 } from '@app/common';
 import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   Patch,
   Post,
+  Query,
   UseFilters,
   UseGuards,
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { PostId } from '../command/domain/entities/post.id';
 import { AddLikePostsCommand } from '../command/impl/add-like.posts.command';
 import { CreatePostsCommand } from '../command/impl/create.posts.command';
 import { EditPostsCommand } from '../command/impl/edit.posts.command';
 import { RemoveLikePostsCommand } from '../command/impl/remove-like.posts.command';
+import { FindAllPostsQuery } from '../query/impl/find-all.posts.query';
 import { CreatePostsDto } from './dto/create.posts.dto';
 import { EditPostsDto } from './dto/edit.posts.dto';
+import { FindAllPostsDto } from './dto/find-all.posts.dto';
 
 @Controller('posts')
 @UseInterceptors(HttpLoggingInterceptor)
@@ -33,7 +39,19 @@ import { EditPostsDto } from './dto/edit.posts.dto';
 @UsePipes(CommonValidateFunction)
 @UseGuards(JwtAuthGuard)
 export class PostsController {
-  constructor(private readonly commandBus: CommandBus) {}
+  constructor(
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
+  ) {}
+
+  @Get()
+  async findAll(@Query() dto: FindAllPostsDto, @CurrentReqId() reqId: ReqId) {
+    const [posts, count] = await this.queryBus.execute<FindAllPostsQuery>(
+      new FindAllPostsQuery({ ...dto, reqId }),
+    );
+
+    return { posts, count };
+  }
 
   @Post()
   async create(@Body() dto: CreatePostsDto, @CurrentUser() user: UserView) {

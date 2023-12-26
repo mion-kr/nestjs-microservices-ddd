@@ -1,5 +1,5 @@
 import { ReqId } from '@app/common';
-import { ReqIdLoggingInterface } from '../../interface';
+import { ReqIdLoggingInterface } from '../../../interface';
 
 export class FindByIdUsersQuery implements ReqIdLoggingInterface {
   id: string;

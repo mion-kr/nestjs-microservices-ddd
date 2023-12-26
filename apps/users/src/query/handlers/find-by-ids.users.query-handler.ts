@@ -1,12 +1,11 @@
+import { FindByIdsUsersQuery, UserId } from '@app/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { UserId } from '../../../../../libs/common/src/cqrs/command/users/user.id';
-import { FindByIdUsersQuery } from '../../../../../libs/common/src/query/users/impl/find-by-id.users.query';
 import { UserViewRepositoryImpl } from '../../infra/user.view-repository.impl';
 import { UserViewRepository } from '../domain/user.view-repository';
 
-@QueryHandler(FindByIdUsersQuery)
-export class FindByIdUsersQueryHandler
-  implements IQueryHandler<FindByIdUsersQuery>
+@QueryHandler(FindByIdsUsersQuery)
+export class FindByIdsUsersQueryHandler
+  implements IQueryHandler<FindByIdsUsersQuery>
 {
   private readonly userRepository: UserViewRepository;
 
@@ -15,7 +14,9 @@ export class FindByIdUsersQueryHandler
     this.userRepository = userViewRepositoryImpl;
   }
 
-  async execute(query: FindByIdUsersQuery): Promise<any> {
-    return await this.userRepository.findById(UserId.of(query));
+  async execute(query: FindByIdsUsersQuery): Promise<any> {
+    return await this.userRepository.findByIds(
+      query.ids.map((id) => UserId.of({ id })),
+    );
   }
 }

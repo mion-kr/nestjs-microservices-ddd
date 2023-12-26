@@ -28,6 +28,21 @@ export class UserViewRepositoryImpl implements UserViewRepository {
     return await UserView.create(savedUser);
   }
 
+  async findByIds(ids: UserId[]): Promise<UserView[]> {
+    const savedUsers = await this.prismaService.user.findMany({
+      where: {
+        id: {
+          in: ids.map((id) => id.toString()),
+        },
+      },
+    });
+
+    const fnMap = async (savedUser) => await UserView.create(savedUser);
+    const users = await Promise.all(savedUsers.map(fnMap));
+
+    return users;
+  }
+
   async findByEmail(email: string): Promise<UserView> {
     const savedUser = await this.prismaService.user.findFirst({
       where: {

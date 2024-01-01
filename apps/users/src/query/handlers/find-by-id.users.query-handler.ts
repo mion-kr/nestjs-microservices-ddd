@@ -1,6 +1,5 @@
+import { FindByIdUsersQuery, UserId } from '@app/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { UserId } from '../../../../../libs/common/src/cqrs/command/users/user.id';
-import { FindByIdUsersQuery } from '../../../../../libs/common/src/query/users/impl/find-by-id.users.query';
 import { UserViewRepositoryImpl } from '../../infra/user.view-repository.impl';
 import { UserViewRepository } from '../domain/user.view-repository';
 

@@ -2,12 +2,12 @@ import { Inject } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
-import { USER_SERVICE, USER_SERVICE_METHOD } from '../../../constants';
-import { UserView } from '../../../cqrs';
-import { FindByIdUsersQuery } from '../impl';
+import { USER_SERVICE, USER_SERVICE_METHOD } from '../../../../constants';
+import { UserView } from '../domain/user.view-entity';
+import { FindByIdUsersQuery } from '../impl/find-by-id.users.query';
 
 @QueryHandler(FindByIdUsersQuery)
-export class FindByIdUsersQueryHandler
+export class FindByIdUsersCommonQueryHandler
   implements IQueryHandler<FindByIdUsersQuery>
 {
   constructor(@Inject(USER_SERVICE) private client: ClientProxy) {}

@@ -43,11 +43,11 @@ export class User extends AbstractEntity<User, UserId> {
       id: UserId;
 
       createBy: string;
-      createdAt: dayjs.Dayjs;
+      createdAt: dayjs.Dayjs | Date;
       updateBy?: string;
-      updatedAt?: dayjs.Dayjs;
+      updatedAt?: dayjs.Dayjs | Date;
       deleteBy?: string;
-      deletedAt?: dayjs.Dayjs;
+      deletedAt?: dayjs.Dayjs | Date;
     } & Omit<
       PrismaUser,
       | 'id'

@@ -1,7 +1,6 @@
 import { PrismaService } from '@app/common';
 import { Injectable } from '@nestjs/common';
 import { User as PrismaUser } from '@prisma/client';
-import * as dayjs from 'dayjs';
 import { UserId } from '../../../../libs/common/src/cqrs/command/users/user.id';
 import { User } from '../command/domain/entities/user.entity';
 import { UserRepository } from '../command/domain/repository/user.repository';
@@ -65,15 +64,6 @@ export class UserRepositoryImpl implements UserRepository {
       ...prismaUser,
 
       id: UserId.of(prismaUser),
-      createdAt: prismaUser?.createdAt
-        ? dayjs(prismaUser.createdAt)
-        : undefined,
-      updatedAt: prismaUser?.updatedAt
-        ? dayjs(prismaUser.updatedAt)
-        : undefined,
-      deletedAt: prismaUser?.deletedAt
-        ? dayjs(prismaUser.deletedAt)
-        : undefined,
     });
   }
 }

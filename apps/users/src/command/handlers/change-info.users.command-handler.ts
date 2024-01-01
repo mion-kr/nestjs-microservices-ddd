@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserId } from '../../../../../libs/common/src/cqrs/command/users/user.id';
 import { NotFoundUserException } from '../../exception/not-found-user.exception';
@@ -30,6 +31,7 @@ export class ChangeInfoUsersCommandHandler
     } catch (error) {
       if (error instanceof NotFoundUserException) throw error;
 
+      Logger.error(error);
       throw new Error(`사용자 정보 변경 작업 중 오류가 발생 하였습니다.`);
     }
   }

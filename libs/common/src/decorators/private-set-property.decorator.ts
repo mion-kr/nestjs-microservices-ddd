@@ -1,3 +1,5 @@
+import * as dayjs from 'dayjs';
+
 /**
  * private set property decorator
  * 필드명이 _로 시작하는 지역변수가 있는 도메인 entity 객체 생성 시 Object.assign을 사용하기 위해 만든 데코레이터 입니다.
@@ -17,6 +19,10 @@ export const PrivateSetProperty = (target: any, propertyKey: string) => {
       return this[propertyKey];
     },
     set(value: any) {
+      // Date 타입은 dayjs.Dayjs 타입으로 변경 합니다.
+      if (value instanceof Date) {
+        value = dayjs(value);
+      }
       this[propertyKey] = value;
       // currentValue = value;
     },

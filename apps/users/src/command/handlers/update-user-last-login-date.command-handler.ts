@@ -20,8 +20,8 @@ export class UpdateUserLastLoginDateCommandHandler
     const user = await this.userRepository.findById(userId);
     if (!isObject(user)) throw new NotFoundUserException();
 
-    user.updateLastLoginDate();
+    await user.updateLastLoginDate();
 
-    this.userRepository.save(user);
+    await this.userRepository.save(user);
   }
 }

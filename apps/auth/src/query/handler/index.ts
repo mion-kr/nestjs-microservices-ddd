@@ -1,11 +1,11 @@
 import {
-  FindByEmailUsersQueryHandler,
-  FindByIdUsersQueryHandler,
+  FindByEmailUsersCommonQueryHandler,
+  FindByIdUsersCommonQueryHandler,
 } from '@app/common';
 import { UserMatchPasswordQueryHandler } from './user-match-password.query-handler';
 
 export const QueryHandlers = [
   UserMatchPasswordQueryHandler,
-  FindByEmailUsersQueryHandler,
-  FindByIdUsersQueryHandler,
+  FindByEmailUsersCommonQueryHandler,
+  FindByIdUsersCommonQueryHandler,
 ];

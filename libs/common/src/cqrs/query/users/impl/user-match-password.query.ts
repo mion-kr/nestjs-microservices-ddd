@@ -1,9 +1,13 @@
 import { ReqId } from '@app/common';
-import { ReqIdLoggingInterface } from '../../../interface';
+import { Type } from 'class-transformer';
+import { ReqIdLoggingInterface } from '../../../../interface';
 
 export class UserMatchPasswordQuery implements ReqIdLoggingInterface {
   email: string;
+
   password: string;
+
+  @Type(() => ReqId)
   reqId: ReqId;
 
   constructor(params: { email: string; password: string; reqId?: ReqId }) {

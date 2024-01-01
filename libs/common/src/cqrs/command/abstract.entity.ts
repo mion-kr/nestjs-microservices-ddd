@@ -1,5 +1,6 @@
 import { AggregateRoot } from '@nestjs/cqrs';
 import * as dayjs from 'dayjs';
+import { PrivateSetProperty } from '../../decorators';
 import { EntityEquals } from '../../interface';
 import { AbstractEntityId } from './abstract.entity-id';
 
@@ -14,11 +15,23 @@ export abstract class AbstractEntity<
   implements EntityEquals<T>
 {
   protected _id: ID;
+
+  @PrivateSetProperty
   protected _createBy: string;
+
+  @PrivateSetProperty
   protected _createdAt: dayjs.Dayjs;
+
+  @PrivateSetProperty
   protected _updateBy: string;
+
+  @PrivateSetProperty
   protected _updatedAt: dayjs.Dayjs;
+
+  @PrivateSetProperty
   protected _deleteBy: string;
+
+  @PrivateSetProperty
   protected _deletedAt: dayjs.Dayjs;
 
   equals(otherObj: T): boolean {
@@ -30,48 +43,48 @@ export abstract class AbstractEntity<
     this._id = id;
   }
 
-  protected set createBy(createBy: string) {
-    this._createBy = createBy;
-  }
+  // protected set createBy(createBy: string) {
+  //   this._createBy = createBy;
+  // }
 
   get createBy(): string {
     return this._createBy;
   }
 
-  protected set createdAt(createdAt: dayjs.Dayjs) {
-    this._createdAt = createdAt;
-  }
+  // protected set createdAt(createdAt: dayjs.Dayjs) {
+  //   this._createdAt = createdAt;
+  // }
 
   get createdAt(): dayjs.Dayjs {
     return this._createdAt;
   }
 
-  protected set updateBy(updateBy: string) {
-    this._updateBy = updateBy;
-  }
+  // protected set updateBy(updateBy: string) {
+  //   this._updateBy = updateBy;
+  // }
   get updateBy(): string {
     return this._updateBy;
   }
 
-  protected set updatedAt(updatedAt: dayjs.Dayjs) {
-    this._updatedAt = updatedAt;
-  }
+  // protected set updatedAt(updatedAt: dayjs.Dayjs) {
+  //   this._updatedAt = updatedAt;
+  // }
 
   get updatedAt(): dayjs.Dayjs {
     return this._updatedAt;
   }
 
-  protected set deleteBy(deleteBy: string) {
-    this._deleteBy = deleteBy;
-  }
+  // protected set deleteBy(deleteBy: string) {
+  //   this._deleteBy = deleteBy;
+  // }
 
   get deleteBy(): string {
     return this._deleteBy;
   }
 
-  protected set deletedAt(deletedAt: dayjs.Dayjs) {
-    this._deletedAt = deletedAt;
-  }
+  // protected set deletedAt(deletedAt: dayjs.Dayjs) {
+  //   this._deletedAt = deletedAt;
+  // }
 
   get deletedAt(): dayjs.Dayjs {
     return this._deletedAt;

@@ -7,7 +7,7 @@ import {
 import * as dayjs from 'dayjs';
 import { nanoid } from 'nanoid';
 import { UserId } from '../../../../../libs/common/src/cqrs/command/users/user.id';
-import { FindByEmailUsersQuery } from '../../../../../libs/common/src/query/users/impl/find-by-email.users.query';
+import { FindByEmailUsersQuery } from '../../../../../libs/common/src/cqrs/query/users/impl/find-by-email.users.query';
 import { CreatedUserEvent } from '../../event/impl/created.user.event';
 import { DuplicateEmailException } from '../../exception/duplicate-email.exception';
 import { DuplicateNicknameException } from '../../exception/duplicate-nickname.exception';
@@ -99,6 +99,8 @@ export class CreateCommandHandler
         id: UserId.of({ id }),
         createBy: id,
         createdAt: dayjs(),
+        updateBy: undefined,
+        updatedAt: undefined,
       }),
     );
     return user;

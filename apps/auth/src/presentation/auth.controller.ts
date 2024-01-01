@@ -56,7 +56,7 @@ export class AuthController {
 
     await this.eventBus.publisher.publish(
       new LoginUserEvent({
-        id: user.id,
+        userId: user.id,
         reqId: reqId,
       }),
     );

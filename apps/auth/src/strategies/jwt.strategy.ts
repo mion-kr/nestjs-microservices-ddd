@@ -24,9 +24,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(req, { userId }: TokenPayload) {
-    const reqId = ReqId.of(req.reqId);
+    const reqId = ReqId.of(req.reqId.value);
     return this.queryBus.execute<FindByIdUsersQuery>(
-      new FindByIdUsersQuery({ id: userId, reqId }),
+      new FindByIdUsersQuery({ userIdValue: userId, reqId }),
     );
   }
 }

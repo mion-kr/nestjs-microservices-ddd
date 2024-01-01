@@ -18,7 +18,7 @@ export class PostViewApplicationHelper {
 
     const users = await queryBus.execute<FindByIdsUsersQuery>(
       new FindByIdsUsersQuery({
-        ids: Array.from(likeUsers),
+        userIdsValue: Array.from(likeUsers),
         reqId: query.reqId,
       }),
     );

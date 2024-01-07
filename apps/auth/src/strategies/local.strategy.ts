@@ -1,8 +1,8 @@
 import {
   FindByEmailUsersQuery,
+  IUserView,
   ReqId,
   UserMatchPasswordQuery,
-  UserView,
 } from '@app/common';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
@@ -32,9 +32,10 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
         throw new IsNotMatchPasswordException();
       }
 
-      const user = await this.queryBus.execute<FindByEmailUsersQuery, UserView>(
-        new FindByEmailUsersQuery({ email, reqId }),
-      );
+      const user = await this.queryBus.execute<
+        FindByEmailUsersQuery,
+        IUserView
+      >(new FindByEmailUsersQuery({ email, reqId }));
 
       return user;
     } catch (error) {

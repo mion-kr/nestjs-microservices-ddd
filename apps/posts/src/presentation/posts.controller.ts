@@ -4,9 +4,9 @@ import {
   CurrentUser,
   HttpExceptionFilter,
   HttpLoggingInterceptor,
+  IUserView,
   JwtAuthGuard,
   ReqId,
-  UserView,
 } from '@app/common';
 import {
   Body,
@@ -66,7 +66,7 @@ export class PostsController {
   }
 
   @Post()
-  async create(@Body() dto: CreatePostsDto, @CurrentUser() user: UserView) {
+  async create(@Body() dto: CreatePostsDto, @CurrentUser() user: IUserView) {
     const postId: PostId = await this.commandBus.execute<CreatePostsCommand>(
       new CreatePostsCommand({ ...dto, createBy: user.id }),
     );
@@ -78,7 +78,7 @@ export class PostsController {
   async edit(
     @Param('postId') postIdValue: string,
     @Body() dto: EditPostsDto,
-    @CurrentUser() user: UserView,
+    @CurrentUser() user: IUserView,
   ) {
     const postId: PostId = await this.commandBus.execute<EditPostsCommand>(
       new EditPostsCommand({ ...dto, id: postIdValue, updateBy: user.id }),
@@ -90,7 +90,7 @@ export class PostsController {
   @Post(':postId/likes')
   async addLike(
     @Param('postId') postIdValue: string,
-    @CurrentUser() user: UserView,
+    @CurrentUser() user: IUserView,
   ) {
     const postId: PostId = await this.commandBus.execute<AddLikePostsCommand>(
       new AddLikePostsCommand({ id: postIdValue, userId: user.id }),
@@ -102,7 +102,7 @@ export class PostsController {
   @Delete(':postId/likes')
   async removeLike(
     @Param('postId') postIdValue: string,
-    @CurrentUser() user: UserView,
+    @CurrentUser() user: IUserView,
   ) {
     const postId: PostId =
       await this.commandBus.execute<RemoveLikePostsCommand>(

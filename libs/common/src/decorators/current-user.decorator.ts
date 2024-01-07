@@ -1,7 +1,7 @@
-import { UserView } from '@app/common';
 import { ExecutionContext, createParamDecorator } from '@nestjs/common';
+import { IUserView } from '../cqrs';
 
-const getCurrentUserByContext = (context: ExecutionContext): UserView => {
+const getCurrentUserByContext = (context: ExecutionContext): IUserView => {
   const { password, ...user } = context.switchToHttp().getRequest().user;
   return user;
 };

@@ -1,11 +1,11 @@
 import { Response } from 'express';
-import { UserView } from '../../../../../libs/common/src';
+import { IUserView } from '../../../../../libs/common/src';
 
 export class CreateUserJwtTokenCommand {
-  user: UserView;
+  user: IUserView;
   response: Response;
 
-  constructor(params: { user: UserView; response: Response }) {
+  constructor(params: { user: IUserView; response: Response }) {
     this.user = params.user;
     this.response = params.response;
   }

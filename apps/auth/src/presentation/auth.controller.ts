@@ -4,9 +4,9 @@ import {
   CurrentUser,
   HttpExceptionFilter,
   HttpLoggingInterceptor,
+  IUserView,
   LoginUserEvent,
   ReqId,
-  UserView,
 } from '@app/common';
 import {
   Controller,
@@ -41,7 +41,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuards)
   async loginUser(
     @CurrentReqId() reqId: ReqId,
-    @CurrentUser() user: UserView,
+    @CurrentUser() user: IUserView,
     @Res({ passthrough: true }) response: Response,
   ) {
     const command = new CreateUserJwtTokenCommand({

@@ -2,9 +2,9 @@ import { Inject } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
-import { UserView } from '../../..';
+import { UserView } from '../../../../../../../apps/users/src/query/domain/user.view-entity';
 import { USER_SERVICE, USER_SERVICE_METHOD } from '../../../../constants';
-import { FindByEmailUsersQuery } from '../../../../query/users/impl';
+import { FindByEmailUsersQuery } from '../impl/find-by-email.users.query';
 
 @QueryHandler(FindByEmailUsersQuery)
 export class FindByEmailUsersCommonQueryHandler

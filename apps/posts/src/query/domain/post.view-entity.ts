@@ -1,4 +1,4 @@
-import { UserView } from '@app/common';
+import { IUserView } from '@app/common';
 import { Post } from '@prisma/client';
 
 export class PostView {
@@ -9,7 +9,7 @@ export class PostView {
   writer: string;
   images: string[];
   likeUserIds: string[];
-  likeUsers: UserView[];
+  likeUsers: IUserView[];
   isUse: boolean;
 
   static async create(params: Post) {
@@ -28,7 +28,7 @@ export class PostView {
     return post;
   }
 
-  async setLikeUsers(userViews: UserView[]) {
+  async setLikeUsers(userViews: IUserView[]) {
     this.likeUsers = userViews;
   }
 }

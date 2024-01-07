@@ -3,9 +3,9 @@ import {
   CurrentUser,
   HttpExceptionFilter,
   HttpLoggingInterceptor,
+  IUserView,
   IsPublic,
   JwtAuthGuard,
-  UserView,
 } from '@app/common';
 import {
   Body,
@@ -44,13 +44,13 @@ export class UsersController {
   ) {}
 
   @Get('/my-info')
-  async findById(@CurrentUser() user: UserView) {
+  async findById(@CurrentUser() user: IUserView) {
     return user;
   }
 
   @Patch('/my-info')
   async changeInfo(
-    @CurrentUser() user: UserView,
+    @CurrentUser() user: IUserView,
     @Body() dto: ChangeInfoUsersDto,
   ) {
     const userId: UserId =
@@ -63,7 +63,7 @@ export class UsersController {
 
   @Patch('/my-info/password')
   async changePassword(
-    @CurrentUser() user: UserView,
+    @CurrentUser() user: IUserView,
     @Body() dto: ChangePasswordUsersDto,
   ) {
     const userId: UserId =
@@ -75,7 +75,7 @@ export class UsersController {
   }
 
   @Delete()
-  async cancel(@CurrentUser() user: UserView) {
+  async cancel(@CurrentUser() user: IUserView) {
     const userId: UserId = await this.commandBus.execute<CancelUsersCommand>(
       new CancelUsersCommand({ idValue: user.id }),
     );

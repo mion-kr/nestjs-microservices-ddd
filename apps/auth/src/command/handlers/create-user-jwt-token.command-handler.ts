@@ -1,4 +1,4 @@
-import { CookieHeader, UserView } from '@app/common';
+import { CookieHeader, IUserView } from '@app/common';
 import { ConfigService } from '@nestjs/config';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { JwtService } from '@nestjs/jwt';
@@ -26,7 +26,7 @@ export class CreateUserJwtTokenCommandHandler
    * @param user
    * @returns
    */
-  private async createToken(user: UserView) {
+  private async createToken(user: IUserView) {
     const tokenPayload: TokenPayload = {
       userId: user.id,
     };

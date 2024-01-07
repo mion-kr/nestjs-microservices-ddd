@@ -10,4 +10,3 @@ export * from './interceptor';
 export * from './interface';
 export * from './logger';
 export * from './pipes';
-export * from './query';

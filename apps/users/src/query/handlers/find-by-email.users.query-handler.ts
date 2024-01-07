@@ -1,6 +1,7 @@
-import { FindByEmailUsersQuery, UserView } from '@app/common';
+import { FindByEmailUsersQuery } from '@app/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { UserViewRepositoryImpl } from '../../infra/user.view-repository.impl';
+import { UserView } from '../domain/user.view-entity';
 import { UserViewRepository } from '../domain/user.view-repository';
 
 @QueryHandler(FindByEmailUsersQuery)

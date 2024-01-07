@@ -8,7 +8,6 @@ import {
   TcpLoggingInterceptor,
   USER_SERVICE_METHOD,
   UserMatchPasswordQuery,
-  UserView,
 } from '@app/common';
 import {
   Controller,
@@ -19,6 +18,7 @@ import {
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
 import { UpdateUserLastLoginDateCommand } from '../command/impl/update-user-last-login-date.command';
+import { UserView } from '../query/domain/user.view-entity';
 
 @Controller()
 @UseFilters(HttpToRpcExceptionFilter)

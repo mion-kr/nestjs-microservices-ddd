@@ -1,8 +1,9 @@
-import { FindAllQuery, PrismaService, UserView } from '@app/common';
+import { FindAllQuery, PrismaService } from '@app/common';
 import { Injectable } from '@nestjs/common';
 import { isObject } from '@nestjs/common/utils/shared.utils';
 import { UserId } from '../../../../libs/common/src/cqrs/command/users/user.id';
 import { NotFoundUserException } from '../exception/not-found-user.exception';
+import { UserView } from '../query/domain/user.view-entity';
 import { UserViewRepository } from '../query/domain/user.view-repository';
 
 @Injectable()

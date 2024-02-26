@@ -6,7 +6,7 @@ import {
 } from '@app/common';
 import { PostComment as PrismaPostComment } from '@prisma/client';
 import { Expose, Transform } from 'class-transformer';
-import { IsOptional, IsString } from 'class-validator';
+import { IsObject, IsOptional, IsString } from 'class-validator';
 import * as dayjs from 'dayjs';
 import { AlreadyLikedUserException } from '../../../exception/already-liked-user.exception';
 import { NotLikedUserException } from '../../../exception/not-liked-user.exception';
@@ -23,7 +23,6 @@ export class PostComment
   private _writer: UserId;
 
   @Expose({ name: 'postId' })
-  // @PrivateSetProperty
   private _postId: PostId;
 
   @Expose({ name: 'comment' })
@@ -94,6 +93,10 @@ export class PostComment
   private set postId(postId: PostId) {
     if (!postId) throw Error(`포스트 id는 필수 값 입니다.`);
     this._postId = postId;
+  }
+
+  private set parentCommentId(parentCommentId: PostCommentId) {
+    this._parentCommentId = parentCommentId;
   }
 
   /**
@@ -219,8 +222,12 @@ export class PostComment
     return this._likeUserIds;
   }
 
-  @Transform(({ value }) => PostCommentId.of({ id: value }))
-  @IsString()
+  @Transform(({ value }) => {
+    if (value instanceof PostCommentId) return value; // 어떠한 이유인지 모르겠지만 Transform이 2번 호출되어 if 조건문 추가
+    const postCommentId = PostCommentId.of({ id: value });
+    return postCommentId;
+  })
+  @IsObject()
   @IsOptional()
   get parentCommentId(): PostCommentId {
     return this._parentCommentId;

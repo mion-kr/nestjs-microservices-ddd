@@ -20,6 +20,7 @@ export class FindOnePostsQueryHandler
   async execute(query: FindOnePostsQuery): Promise<any> {
     const data = await this.postViewRepository.findById(query.id);
 
+    await PostViewApplicationHelper.setWriter([data], query, this.queryBus);
     await PostViewApplicationHelper.setLikeUser([data], query, this.queryBus);
 
     return data;

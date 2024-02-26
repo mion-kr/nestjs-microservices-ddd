@@ -4,6 +4,31 @@ import { PostView } from '../domain/post.view-entity';
 
 export class PostViewApplicationHelper {
   /**
+   * 사용자 정보 추가
+   * @param datas
+   * @param query
+   * @param queryBus
+   */
+  static async setWriter(
+    datas: PostView[],
+    query: { reqId: ReqId },
+    queryBus: QueryBus,
+  ) {
+    const writerIds = datas.map((data) => data.writerId);
+
+    const users = await queryBus.execute<FindByIdsUsersQuery>(
+      new FindByIdsUsersQuery({
+        userIdsValue: writerIds,
+        reqId: query.reqId,
+      }),
+    );
+
+    datas.map((data) => {
+      const writer = users.find((user) => user.id === data.writerId);
+      data.setWriter(writer);
+    });
+  }
+  /**
    * 좋아요한 사용자 정보 추가
    * @param datas
    * @param query

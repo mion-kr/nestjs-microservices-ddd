@@ -6,7 +6,8 @@ export class PostView {
 
   title: string;
   content: string;
-  writer: string;
+  writer: IUserView;
+  writerId: string;
   images: string[];
   likeUserIds: string[];
   likeUsers: IUserView[];
@@ -20,12 +21,16 @@ export class PostView {
     post.id = id;
     post.title = title;
     post.content = content;
-    post.writer = writer;
+    post.writerId = writer;
     post.images = imageUrls;
     post.likeUserIds = likeUserIds;
     post.isUse = isUse;
 
     return post;
+  }
+
+  async setWriter(userView: IUserView) {
+    this.writer = userView;
   }
 
   async setLikeUsers(userViews: IUserView[]) {

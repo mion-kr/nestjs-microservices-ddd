@@ -20,6 +20,7 @@ export class FindAllPostsQueryHandler
   async execute(query: FindAllPostsQuery): Promise<any> {
     const [datas, count] = await this.postViewRepository.findAll(query);
 
+    await PostViewApplicationHelper.setWriter(datas, query, this.queryBus);
     await PostViewApplicationHelper.setLikeUser(datas, query, this.queryBus);
 
     return [datas, count];

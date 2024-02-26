@@ -4,6 +4,7 @@ import { CreatePostsCommentCommandHandler } from './create.posts-comment.command
 import { CreatePostsCommandHandler } from './create.posts.command-handler';
 import { EditPostsCommentCommandHandler } from './edit.posts-comment.command-handler';
 import { EditPostsCommandHandler } from './edit.posts.command-handler';
+import { RemoveLikePostCommentsCommandHandler } from './remove-like.posts-comment.command-handler';
 import { RemoveLikePostsCommandHandler } from './remove-like.posts.command-handler';
 
 export const CommandHandlers = [
@@ -17,4 +18,5 @@ export const CommandHandlers = [
   RemoveLikePostsCommandHandler,
 
   AddLikePostsCommentCommandHandler,
+  RemoveLikePostCommentsCommandHandler,
 ];

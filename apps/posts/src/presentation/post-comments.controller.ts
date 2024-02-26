@@ -9,6 +9,7 @@ import {
 import {
   Body,
   Controller,
+  Delete,
   Param,
   Patch,
   Post,
@@ -22,6 +23,7 @@ import { PostCommentId } from '../command/domain/entities/post-comment.id';
 import { AddLikePostsCommentCommand } from '../command/impl/add-like.posts-comment.command';
 import { CreatePostsCommentCommand } from '../command/impl/create.posts-comment.command';
 import { EditPostsCommentCommand } from '../command/impl/edit.posts-comment.command';
+import { RemoveLikePostsCommentCommand } from '../command/impl/remove-like.posts-comment.command';
 import { CreatePostsCommentDto } from './dto/create.posts-comment.dto';
 import { EditPostsCommentDto } from './dto/edit.posts-comment.dto';
 
@@ -83,6 +85,24 @@ export class PostsCommentController {
     const postCommentId: PostCommentId =
       await this.commandBus.execute<AddLikePostsCommentCommand>(
         new AddLikePostsCommentCommand({
+          postId: postIdValue,
+          postCommentId: postCommentIdValue,
+          userId: user.id,
+        }),
+      );
+
+    return postCommentId.toString();
+  }
+
+  @Delete(':commentId/likes')
+  async removeLike(
+    @Param('postId') postIdValue: string,
+    @Param('commentId') postCommentIdValue: string,
+    @CurrentUser() user: IUserView,
+  ) {
+    const postCommentId: PostCommentId =
+      await this.commandBus.execute<RemoveLikePostsCommentCommand>(
+        new RemoveLikePostsCommentCommand({
           postId: postIdValue,
           postCommentId: postCommentIdValue,
           userId: user.id,

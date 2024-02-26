@@ -1,4 +1,3 @@
-import { isObject } from '@nestjs/common/utils/shared.utils';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserId } from '../../../../../libs/common/src/cqrs/command/users/user.id';
 import { NotFoundUserException } from '../../exception/not-found-user.exception';
@@ -18,7 +17,7 @@ export class UpdateUserLastLoginDateCommandHandler
   async execute(command: UpdateUserLastLoginDateCommand): Promise<any> {
     const userId = UserId.of({ id: command.idValue });
     const user = await this.userRepository.findById(userId);
-    if (!isObject(user)) throw new NotFoundUserException();
+    if (!user) throw new NotFoundUserException();
 
     await user.updateLastLoginDate();
 

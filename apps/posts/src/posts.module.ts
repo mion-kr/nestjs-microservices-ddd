@@ -12,6 +12,7 @@ import * as Joi from 'joi';
 import { CommandHandlers } from './command/handlers';
 import { EventHandlers } from './event/handlers';
 import { Infra } from './infra';
+import { PostsCommentController } from './presentation/post-comments.controller';
 import { PostsController } from './presentation/posts.controller';
 import { QueryHandlers } from './query/handlers';
 
@@ -60,7 +61,7 @@ import { QueryHandlers } from './query/handlers';
       ,
     ]),
   ],
-  controllers: [PostsController],
+  controllers: [PostsController, PostsCommentController],
   providers: [...CommandHandlers, ...QueryHandlers, ...EventHandlers, ...Infra],
 })
 export class PostsModule {}

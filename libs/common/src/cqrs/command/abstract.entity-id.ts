@@ -5,7 +5,7 @@ export class AbstractEntityId {
   private _id: string;
 
   static of(params: { id: string }): AbstractEntityId {
-    const entityId = Object.assign(new this(), params);
+    const entityId = Object.assign(new this(), structuredClone(params));
 
     return entityId;
   }

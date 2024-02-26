@@ -5,7 +5,7 @@ export class ImageUrl {
   private _url: string;
 
   static of(params: { url: string }): ImageUrl {
-    const image = Object.assign(new this(), params);
+    const image = Object.assign(new this(), structuredClone(params));
 
     return image;
   }

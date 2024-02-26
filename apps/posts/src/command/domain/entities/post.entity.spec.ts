@@ -15,7 +15,7 @@ describe('post', () => {
       content: '포스트 컨텐츠',
       images: [ImageUrl.of({ url: 'https://www.naver.com' })],
       isUse: true,
-      writer: 'mion',
+      writer: UserId.of({ id: '123' }),
       createBy: 'mion',
       createdAt: dayjs(),
     });

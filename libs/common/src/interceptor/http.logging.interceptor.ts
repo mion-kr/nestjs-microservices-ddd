@@ -67,6 +67,7 @@ export class HttpLoggingInterceptor implements NestInterceptor {
         );
       }),
       catchError((error) => {
+        // TODO http exception이 아니면 오류 메시지가 pino 객체로 안나옴
         const res = {
           data: JSON.stringify(error),
         };
@@ -78,9 +79,9 @@ export class HttpLoggingInterceptor implements NestInterceptor {
             res: res,
             responseTime: Date.now() - now,
           },
-          `${this.type} [${className}::${method}] - error[${
-            error.message
-          }] executed in ${Date.now() - now}ms`,
+          `${this.type} [${className}::${method}] - error[${JSON.stringify(
+            error.message,
+          )}] executed in ${Date.now() - now}ms`,
           contextName,
         );
 

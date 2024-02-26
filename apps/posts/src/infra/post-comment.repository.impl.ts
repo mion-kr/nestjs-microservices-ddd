@@ -25,6 +25,7 @@ export class PostCommentRepositoryImpl implements PostCommentRepository {
           id: postComment.id.toString(),
           postId: postComment.postId.toString(),
           comment: postComment.comment,
+          likeUserIds: [],
           writer: postComment.writer.toString(),
           isUse: postComment.isUse,
           parentCommentId: postComment.parentCommentId?.toString(),

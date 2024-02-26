@@ -10,6 +10,7 @@ import {
   Body,
   Controller,
   Param,
+  Patch,
   Post,
   UseFilters,
   UseGuards,
@@ -19,7 +20,9 @@ import {
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { PostCommentId } from '../command/domain/entities/post-comment.id';
 import { CreatePostsCommentCommand } from '../command/impl/create.posts-comment.command';
+import { EditPostsCommentCommand } from '../command/impl/edit.posts-comment.command';
 import { CreatePostsCommentDto } from './dto/create.posts-comment.dto';
+import { EditPostsCommentDto } from './dto/edit.posts-comment.dto';
 
 @Controller('posts/:postId/comments')
 @UseInterceptors(HttpLoggingInterceptor)
@@ -44,6 +47,26 @@ export class PostsCommentController {
           ...dto,
           postId: postIdValue,
           createBy: user.id,
+        }),
+      );
+
+    return postCommentId.toString();
+  }
+
+  @Patch(':commentId')
+  async edit(
+    @Param('postId') postIdValue: string,
+    @Param('commentId') postCommentIdValue: string,
+    @Body() dto: EditPostsCommentDto,
+    @CurrentUser() user: IUserView,
+  ) {
+    const postCommentId: PostCommentId =
+      await this.commandBus.execute<EditPostsCommentCommand>(
+        new EditPostsCommentCommand({
+          ...dto,
+          postId: postIdValue,
+          postCommentId: postCommentIdValue,
+          updateBy: user.id,
         }),
       );
 

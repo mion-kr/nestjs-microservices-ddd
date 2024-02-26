@@ -6,7 +6,7 @@ import {
 } from '@app/common';
 import { PostComment as PrismaPostComment } from '@prisma/client';
 import { Expose, Transform } from 'class-transformer';
-import { IsObject, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsObject, IsOptional, IsString } from 'class-validator';
 import * as dayjs from 'dayjs';
 import { AlreadyLikedUserException } from '../../../exception/already-liked-user.exception';
 import { NotLikedUserException } from '../../../exception/not-liked-user.exception';
@@ -104,17 +104,17 @@ export class PostComment
    * @param params
    */
   async editPostComment(params: {
-    content?: string;
+    comment?: string;
     isUse?: boolean;
     updateBy: string;
   }) {
-    const { content, isUse, updateBy } = params;
+    const { comment, isUse, updateBy } = params;
 
     if (!this.isMatchWriter(UserId.of({ id: updateBy }))) {
       throw new NotMatchUserException();
     }
 
-    this._comment = content ?? this._comment;
+    this._comment = comment ?? this._comment;
     this._isUse = isUse ?? this._isUse;
   }
 
@@ -214,6 +214,7 @@ export class PostComment
     return this._comment;
   }
 
+  @IsBoolean()
   get isUse(): boolean {
     return this._isUse;
   }

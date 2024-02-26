@@ -1,3 +1,4 @@
+import { AddLikePostsCommentCommandHandler } from './add-like.posts-comment.command-handler';
 import { AddLikePostsCommandHandler } from './add-like.posts.command-handler';
 import { CreatePostsCommentCommandHandler } from './create.posts-comment.command-handler';
 import { CreatePostsCommandHandler } from './create.posts.command-handler';
@@ -14,4 +15,6 @@ export const CommandHandlers = [
 
   AddLikePostsCommandHandler,
   RemoveLikePostsCommandHandler,
+
+  AddLikePostsCommentCommandHandler,
 ];

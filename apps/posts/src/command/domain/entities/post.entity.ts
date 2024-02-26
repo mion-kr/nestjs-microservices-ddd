@@ -9,9 +9,9 @@ import { Post as PrismaPost } from '@prisma/client';
 import { Expose } from 'class-transformer';
 import { IsNotEmpty, IsString } from 'class-validator';
 import * as dayjs from 'dayjs';
-import { AlreadyLikedUserException } from '../../../exception/already-liked-user.exception';
-import { NotLikedUserException } from '../../../exception/not-liked-user.exception';
+import { AlreadyPostLikedUserException } from '../../../exception/already-post-liked-user.exception';
 import { NotMatchUserException } from '../../../exception/not-match-user.exception';
+import { NotPostLikedUserException } from '../../../exception/not-post-liked-user.exception';
 import { PostId } from './post.id';
 
 export class Post
@@ -155,7 +155,7 @@ export class Post
     const { userId } = params;
 
     if (this.getLikedUserByUserId(userId)) {
-      throw new AlreadyLikedUserException(this.id, userId);
+      throw new AlreadyPostLikedUserException(this.id, userId);
     }
 
     this._likeUserIds.push(userId);
@@ -169,7 +169,7 @@ export class Post
     const { userId } = params;
 
     if (!this.getLikedUserByUserId(userId)) {
-      throw new NotLikedUserException(this._id, userId);
+      throw new NotPostLikedUserException(this._id, userId);
     }
 
     this._likeUserIds = this._likeUserIds.filter(

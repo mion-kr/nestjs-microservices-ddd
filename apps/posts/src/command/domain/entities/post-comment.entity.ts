@@ -8,9 +8,9 @@ import { PostComment as PrismaPostComment } from '@prisma/client';
 import { Expose, Transform } from 'class-transformer';
 import { IsBoolean, IsObject, IsOptional, IsString } from 'class-validator';
 import * as dayjs from 'dayjs';
-import { AlreadyLikedUserException } from '../../../exception/already-liked-user.exception';
-import { NotLikedUserException } from '../../../exception/not-liked-user.exception';
+import { AlreadyPostCommentLikedUserException } from '../../../exception/already-post-comment-liked-user.exception';
 import { NotMatchUserException } from '../../../exception/not-match-user.exception';
+import { NotPostCommentLikedUserException } from '../../../exception/not-post-comment-liked-user.exception';
 import { PostCommentId } from './post-comment.id';
 import { PostId } from './post.id';
 
@@ -166,7 +166,7 @@ export class PostComment
     const { userId } = params;
 
     if (this.getLikedUserByUserId(userId)) {
-      throw new AlreadyLikedUserException(this.id, userId);
+      throw new AlreadyPostCommentLikedUserException(this.id, userId);
     }
 
     this._likeUserIds.push(userId);
@@ -180,7 +180,7 @@ export class PostComment
     const { userId } = params;
 
     if (!this.getLikedUserByUserId(userId)) {
-      throw new NotLikedUserException(this._id, userId);
+      throw new NotPostCommentLikedUserException(this._id, userId);
     }
 
     this._likeUserIds = this._likeUserIds.filter(

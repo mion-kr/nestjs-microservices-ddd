@@ -19,6 +19,7 @@ import {
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { PostCommentId } from '../command/domain/entities/post-comment.id';
+import { AddLikePostsCommentCommand } from '../command/impl/add-like.posts-comment.command';
 import { CreatePostsCommentCommand } from '../command/impl/create.posts-comment.command';
 import { EditPostsCommentCommand } from '../command/impl/edit.posts-comment.command';
 import { CreatePostsCommentDto } from './dto/create.posts-comment.dto';
@@ -67,6 +68,24 @@ export class PostsCommentController {
           postId: postIdValue,
           postCommentId: postCommentIdValue,
           updateBy: user.id,
+        }),
+      );
+
+    return postCommentId.toString();
+  }
+
+  @Post(':commentId/likes')
+  async addLike(
+    @Param('postId') postIdValue: string,
+    @Param('commentId') postCommentIdValue: string,
+    @CurrentUser() user: IUserView,
+  ) {
+    const postCommentId: PostCommentId =
+      await this.commandBus.execute<AddLikePostsCommentCommand>(
+        new AddLikePostsCommentCommand({
+          postId: postIdValue,
+          postCommentId: postCommentIdValue,
+          userId: user.id,
         }),
       );
 

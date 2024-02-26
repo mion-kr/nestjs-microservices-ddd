@@ -1,6 +1,6 @@
 import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
+import { UserId } from '../../../../../libs/common/src';
 import { NotFoundPostCommentException } from '../../exception/not-found-post-comment.exception';
-import { NotFoundPostException } from '../../exception/not-found-post.exception';
 import { PostCommentRepositoryImpl } from '../../infra/post-comment.repository.impl';
 import { PostRepositoryImpl } from '../../infra/post.repository.impl';
 import { PostComment } from '../domain/entities/post-comment.entity';
@@ -9,11 +9,11 @@ import { Post } from '../domain/entities/post.entity';
 import { PostId } from '../domain/entities/post.id';
 import { PostCommentRepository } from '../domain/repository/post-comment.repository';
 import { PostRepository } from '../domain/repository/post.repository';
-import { EditPostsCommentCommand } from '../impl/edit.posts-comment.command';
+import { AddLikePostsCommentCommand } from '../impl/add-like.posts-comment.command';
 
-@CommandHandler(EditPostsCommentCommand)
-export class EditPostsCommentCommandHandler
-  implements ICommandHandler<EditPostsCommentCommand>
+@CommandHandler(AddLikePostsCommentCommand)
+export class AddLikePostsCommentCommandHandler
+  implements ICommandHandler<AddLikePostsCommentCommand>
 {
   private readonly postRepository: PostRepository;
   private readonly postCommentRepository: PostCommentRepository;
@@ -27,7 +27,7 @@ export class EditPostsCommentCommandHandler
     this.postCommentRepository = postCommentRepositoryImpl;
   }
 
-  async execute(command: EditPostsCommentCommand): Promise<PostId> {
+  async execute(command: AddLikePostsCommentCommand): Promise<PostId> {
     const post = await this.postRepository.findById(
       PostId.of({ id: command.postId }),
     );
@@ -40,7 +40,7 @@ export class EditPostsCommentCommandHandler
 
     await this.validate(command, { post, postComment });
 
-    await this.edit(postComment, command);
+    await this.addLike(postComment, command);
 
     await this.postCommentRepository.save(postComment);
 
@@ -50,12 +50,11 @@ export class EditPostsCommentCommandHandler
   }
 
   private async validate(
-    command: EditPostsCommentCommand,
+    command: AddLikePostsCommentCommand,
     params: { post: Post; postComment: PostComment },
   ) {
     const { post, postComment } = params;
-    if (!post)
-      throw new NotFoundPostException(PostId.of({ id: command.postId }));
+    if (!post) throw new NotFoundPostCommentException(post.id);
 
     if (!postComment)
       throw new NotFoundPostCommentException(
@@ -63,19 +62,19 @@ export class EditPostsCommentCommandHandler
       );
   }
 
-  private async edit(
+  private async addLike(
     postComment: PostComment,
-    command: EditPostsCommentCommand,
+    command: AddLikePostsCommentCommand,
   ) {
-    await postComment.editPostComment(command);
+    await postComment.addLike({ userId: UserId.of({ id: command.userId }) });
   }
 
   /**
    * 이벤트 발생
    * @param user
    */
-  private publishEvent(postComment: PostComment) {
+  private publishEvent(post: PostComment) {
     // post.apply(new EditdUserEvent(post.id));
-    postComment.commit();
+    post.commit();
   }
 }

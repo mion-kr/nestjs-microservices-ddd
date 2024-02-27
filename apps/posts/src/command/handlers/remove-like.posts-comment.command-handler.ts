@@ -32,13 +32,13 @@ export class RemoveLikePostCommentsCommandHandler
       PostId.of({ id: command.postId }),
     );
 
-    const postComment = this.eventPublisher.mergeObjectContext(
-      await this.postCommentRepository.findById(
-        PostCommentId.of({ id: command.postCommentId }),
-      ),
+    let postComment = await this.postCommentRepository.findById(
+      PostCommentId.of({ id: command.postCommentId }),
     );
 
     await this.validate(command, { post, postComment });
+
+    postComment = this.eventPublisher.mergeObjectContext(postComment);
 
     await this.removeLike(postComment, command);
 

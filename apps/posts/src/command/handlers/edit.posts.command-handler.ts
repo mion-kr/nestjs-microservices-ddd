@@ -23,11 +23,11 @@ export class EditPostsCommandHandler
   async execute(command: EditPostsCommand): Promise<PostId> {
     const postId = PostId.of({ id: command.id });
 
-    const post = this.eventPublisher.mergeObjectContext(
-      await this.postRepository.findById(postId),
-    );
+    let post = await this.postRepository.findById(postId);
 
     await this.validate(command, post);
+
+    post = this.eventPublisher.mergeObjectContext(post);
 
     await this.editPost(command, post);
 

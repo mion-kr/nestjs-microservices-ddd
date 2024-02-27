@@ -24,6 +24,7 @@ import { AddLikePostsCommentCommand } from '../command/impl/add-like.posts-comme
 import { CreatePostsCommentCommand } from '../command/impl/create.posts-comment.command';
 import { EditPostsCommentCommand } from '../command/impl/edit.posts-comment.command';
 import { RemoveLikePostsCommentCommand } from '../command/impl/remove-like.posts-comment.command';
+import { RemovePostsCommentCommand } from '../command/impl/remove.posts-comment.command';
 import { CreatePostsCommentDto } from './dto/create.posts-comment.dto';
 import { EditPostsCommentDto } from './dto/edit.posts-comment.dto';
 
@@ -70,6 +71,24 @@ export class PostsCommentController {
           postId: postIdValue,
           postCommentId: postCommentIdValue,
           updateBy: user.id,
+        }),
+      );
+
+    return postCommentId.toString();
+  }
+
+  @Delete(':commentId')
+  async remove(
+    @Param('postId') postIdValue: string,
+    @Param('commentId') postCommentIdValue: string,
+    @CurrentUser() user: IUserView,
+  ) {
+    const postCommentId: PostCommentId =
+      await this.commandBus.execute<RemovePostsCommentCommand>(
+        new RemovePostsCommentCommand({
+          postId: postIdValue,
+          postCommentId: postCommentIdValue,
+          deleteBy: user.id,
         }),
       );
 

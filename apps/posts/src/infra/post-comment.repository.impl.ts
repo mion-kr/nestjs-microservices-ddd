@@ -15,10 +15,7 @@ import { PostCommentRepository } from '../command/domain/repository/post-comment
 export class PostCommentRepositoryImpl implements PostCommentRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async save(
-    postComment: PostComment,
-    by?: { updateBy?: string },
-  ): Promise<void> {
+  async save(postComment: PostComment): Promise<void> {
     try {
       await this.prismaService.postComment.upsert({
         create: {
@@ -39,8 +36,8 @@ export class PostCommentRepositoryImpl implements PostCommentRepository {
           ),
           isUse: postComment.isUse,
           updateBy: postComment?.updateBy,
-          updatedAt: by?.updateBy,
-          deleteBy: by?.updateBy,
+          updatedAt: postComment?.updatedAt.toDate(),
+          deleteBy: postComment?.updateBy,
           deletedAt: postComment?.deletedAt?.toDate(),
         },
         where: {

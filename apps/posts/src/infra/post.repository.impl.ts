@@ -10,7 +10,7 @@ import { PostRepository } from '../command/domain/repository/post.repository';
 export class PostRepositoryImpl implements PostRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async save(post: Post, by?: { updateBy?: string }): Promise<void> {
+  async save(post: Post): Promise<void> {
     await this.prismaService.post.upsert({
       create: {
         id: post.id.toString(),
@@ -27,8 +27,8 @@ export class PostRepositoryImpl implements PostRepository {
         imageUrls: post.images.map((image) => image.url),
         likeUserIds: post.likeUserIds.map((userId) => userId.toString()),
         updateBy: post?.updateBy,
-        updatedAt: by?.updateBy,
-        deleteBy: by?.updateBy,
+        updatedAt: post?.updatedAt.toDate(),
+        deleteBy: post?.deleteBy,
         deletedAt: post?.deletedAt?.toDate(),
       },
       where: {

@@ -4,7 +4,6 @@ import {
   PrivateSetProperty,
   UserId,
 } from '@app/common';
-import { User as PrismaUser } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 import { Expose } from 'class-transformer';
 import {
@@ -14,6 +13,7 @@ import {
   IsStrongPassword,
 } from 'class-validator';
 import * as dayjs from 'dayjs';
+import { InsertUser } from 'libs/common/src/database/drizzle/schema/user.schema';
 import { CanceledUserEvent } from '../../../event/impl/canceled.user.event';
 
 export class User extends AbstractEntity<User, UserId> {
@@ -49,7 +49,7 @@ export class User extends AbstractEntity<User, UserId> {
       deleteBy?: string;
       deletedAt?: dayjs.Dayjs | Date;
     } & Omit<
-      PrismaUser,
+      InsertUser,
       | 'id'
       | 'createdAt'
       | 'updatedAt'

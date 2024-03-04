@@ -1,10 +1,10 @@
 import {
   AbstractEntity,
   EntityEquals,
+  InsertPostComment,
   PrivateSetProperty,
   UserId,
 } from '@app/common';
-import { PostComment as PrismaPostComment } from '@prisma/client';
 import { Expose, Transform } from 'class-transformer';
 import { IsBoolean, IsObject, IsOptional, IsString } from 'class-validator';
 import * as dayjs from 'dayjs';
@@ -66,18 +66,7 @@ export class PostComment
       updatedAt?: dayjs.Dayjs;
       deleteBy?: string;
       deletedAt?: dayjs.Dayjs;
-    } & Pick<PrismaPostComment, 'comment' | 'isUse'>,
-    // & Omit<
-    //   PrismaPost,
-    //   | 'id'
-    //   | 'createdAt'
-    //   | 'updatedAt'
-    //   | 'deletedAt'
-    //   | 'updateBy'
-    //   | 'deleteBy'
-    //   | 'imageUrls'
-    //   | 'likeUserIds'
-    // >,
+    } & Pick<InsertPostComment, 'comment' | 'isUse'>,
   ) {
     const entity = Object.assign(new this(), params); // structuredClone을 사용하면 하위 오브젝트의 class type이 지정되지 않습니다.
     entity.likeUserIds = params.likeUserIds ?? [];

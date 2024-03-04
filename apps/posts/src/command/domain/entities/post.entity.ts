@@ -2,10 +2,10 @@ import {
   AbstractEntity,
   EntityEquals,
   ImageUrl,
+  InsertPost,
   PrivateSetProperty,
   UserId,
 } from '@app/common';
-import { Post as PrismaPost } from '@prisma/client';
 import { Expose } from 'class-transformer';
 import { IsNotEmpty, IsString } from 'class-validator';
 import * as dayjs from 'dayjs';
@@ -60,18 +60,7 @@ export class Post
       updatedAt?: dayjs.Dayjs;
       deleteBy?: string;
       deletedAt?: dayjs.Dayjs;
-    } & Pick<PrismaPost, 'title' | 'content' | 'isUse'>,
-    // & Omit<
-    //   PrismaPost,
-    //   | 'id'
-    //   | 'createdAt'
-    //   | 'updatedAt'
-    //   | 'deletedAt'
-    //   | 'updateBy'
-    //   | 'deleteBy'
-    //   | 'imageUrls'
-    //   | 'likeUserIds'
-    // >,
+    } & Pick<InsertPost, 'title' | 'content' | 'isUse'>,
   ) {
     const entity = Object.assign(new this(), params);
     entity.likeUserIds = params.likeUserIds ?? [];

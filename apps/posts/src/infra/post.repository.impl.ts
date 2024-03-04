@@ -1,18 +1,23 @@
-import { ImageUrl, PrismaService, UserId } from '@app/common';
-import { Injectable } from '@nestjs/common';
-import { Post as PrismaPost } from '@prisma/client';
+import { DrizzleAsyncProvider, ImageUrl, UserId } from '@app/common';
+import { Inject, Injectable } from '@nestjs/common';
 import * as dayjs from 'dayjs';
+import { and, eq, isNull } from 'drizzle-orm';
+import { NeonHttpDatabase } from 'drizzle-orm/neon-http';
+import * as schema from 'libs/common/src/database/drizzle/schema';
 import { Post } from '../command/domain/entities/post.entity';
 import { PostId } from '../command/domain/entities/post.id';
 import { PostRepository } from '../command/domain/repository/post.repository';
 
 @Injectable()
 export class PostRepositoryImpl implements PostRepository {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    @Inject(DrizzleAsyncProvider) private db: NeonHttpDatabase<typeof schema>,
+  ) {}
 
   async save(post: Post): Promise<void> {
-    await this.prismaService.post.upsert({
-      create: {
+    await this.db
+      .insert(schema.post)
+      .values({
         id: post.id.toString(),
         title: post.title,
         content: post.content,
@@ -20,53 +25,53 @@ export class PostRepositoryImpl implements PostRepository {
         imageUrls: post.images.map((image) => image.url),
         createBy: post.createBy,
         createdAt: post.createdAt.toDate(),
-      },
-      update: {
-        title: post.title,
-        content: post.content,
-        imageUrls: post.images.map((image) => image.url),
-        likeUserIds: post.likeUserIds.map((userId) => userId.toString()),
-        updateBy: post?.updateBy,
-        updatedAt: post?.updatedAt.toDate(),
-        deleteBy: post?.deleteBy,
-        deletedAt: post?.deletedAt?.toDate(),
-      },
-      where: {
-        id: post.id.toString(),
-      },
-    });
+      })
+      .onConflictDoUpdate({
+        target: [schema.post.id],
+        set: {
+          title: post.title,
+          content: post.content,
+          imageUrls: post.images.map((image) => image.url),
+          likeUserIds: post.likeUserIds.map((userId) => userId.toString()),
+          updateBy: post?.updateBy,
+          updatedAt: post?.updatedAt?.toDate(),
+          deleteBy: post?.deleteBy,
+          deletedAt: post?.deletedAt?.toDate(),
+        },
+        where: eq(schema.post.id, post.id.toString()),
+      });
   }
 
   async findById(id: PostId): Promise<Post> {
-    const savedPost = await this.prismaService.post.findUnique({
-      where: {
-        id: id.toString(),
-        deletedAt: null,
-      },
+    const savedPost = await this.db.query.post.findFirst({
+      where: and(
+        eq(schema.post.id, id.toString()),
+        isNull(schema.post.deletedAt),
+      ),
     });
 
     return await this.convertToDomain(savedPost);
   }
 
-  private async convertToDomain(prismaPost: PrismaPost): Promise<Post> {
-    if (!prismaPost) return undefined;
+  private async convertToDomain(drizzlePost: schema.SelectPost): Promise<Post> {
+    if (!drizzlePost) return undefined;
     return await Post.create({
-      ...prismaPost,
-      images: prismaPost.imageUrls.map((url) => ImageUrl.of({ url })),
-      likeUserIds: prismaPost.likeUserIds.map((userId) =>
+      ...drizzlePost,
+      images: drizzlePost.imageUrls.map((url) => ImageUrl.of({ url })),
+      likeUserIds: drizzlePost.likeUserIds.map((userId) =>
         UserId.of({ id: userId }),
       ),
 
-      writer: UserId.of({ id: prismaPost.writer }),
-      id: PostId.of(prismaPost),
-      createdAt: prismaPost?.createdAt
-        ? dayjs(prismaPost.createdAt)
+      writer: UserId.of({ id: drizzlePost.writer }),
+      id: PostId.of(drizzlePost),
+      createdAt: drizzlePost?.createdAt
+        ? dayjs(drizzlePost.createdAt)
         : undefined,
-      updatedAt: prismaPost?.updatedAt
-        ? dayjs(prismaPost.updatedAt)
+      updatedAt: drizzlePost?.updatedAt
+        ? dayjs(drizzlePost.updatedAt)
         : undefined,
-      deletedAt: prismaPost?.deletedAt
-        ? dayjs(prismaPost.deletedAt)
+      deletedAt: drizzlePost?.deletedAt
+        ? dayjs(drizzlePost.deletedAt)
         : undefined,
     });
   }

@@ -65,11 +65,11 @@ services:
     volumes:
       - .:/usr/src/app
 
-  postgres:
-    image: postgres
-    ports:
-      - 5432:5432
-    environment:
-      POSTGRES_PASSWORD: reasearch-2023
-    volumes:
-      - ./postgres/data/db:/var/lib/postgresql/data
+  # postgres:
+  #   image: postgres
+  #   ports:
+  #     - 5432:5432
+  #   environment:
+  #     POSTGRES_PASSWORD: reasearch-2023
+  #   volumes:
+  #     - ./postgres/data/db:/var/lib/postgresql/data

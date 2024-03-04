@@ -1,15 +1,8 @@
 import { Module } from '@nestjs/common';
-import { extendedPrismaClient } from './prisma.extension';
-import { PrismaService } from './prisma.service';
+import { DrizzleProvider } from './drizzle/drizzle.provider';
 
-const commonExtendedService = {
-  provide: PrismaService,
-  useFactory: () => {
-    return extendedPrismaClient;
-  },
-};
 @Module({
-  providers: [commonExtendedService],
-  exports: [commonExtendedService],
+  providers: [...DrizzleProvider],
+  exports: [...DrizzleProvider],
 })
 export class DatabaseModule {}

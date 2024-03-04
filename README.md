@@ -12,3 +12,20 @@
 
 2. helm, 쿠버네티스를 이용한 개발/배포
    어느 클라우드 회사걸 사용할지 고민
+
+## ORM
+
+### Drizzle Orm
+
+- [list of commands](https://orm.drizzle.team/kit-docs/commands#introspect--pull)
+  - migration: `drizzle-kit generate:pg`
+    - drizzle-kit generate:{dialect} lets you generate migrations based on you Drizzle schema.
+  - Introspect / Pull: `drizzle-kit introspect:pg`
+    - drizzle-kit introspect:{dialect} command lets you pull DDL from existing database and generate schema.ts file in matter of seconds.
+  - push: `drizzle-kit push:pg`
+    - drizzle-kit push:{dialect} lets you push your schema changes directly to the database and omit managing SQL migration files.
+  - drop migration: `drizzle-kit drop`
+    - drizzle-kit drop lets you delete previously generated migrations from migrations folder
+  - check: `drizzle-kit check:pg` - drizzle-kit check:{dialect} is a very powerful tool for you to check consistency of your migrations.
+    That’s extremely useful when you have multiple people on the project, altering database schema on different branches.
+    Drizzle Kit will check for all collisions and inconsistencies.

@@ -1,69 +1,67 @@
-import { PrismaService } from '@app/common';
-import { Injectable } from '@nestjs/common';
-import { User as PrismaUser } from '@prisma/client';
-import { UserId } from '../../../../libs/common/src/cqrs/command/users/user.id';
+import { DrizzleAsyncProvider, UserId } from '@app/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { and, eq, isNull } from 'drizzle-orm';
+import { NeonHttpDatabase } from 'drizzle-orm/neon-http';
+import * as schema from 'libs/common/src/database/drizzle/schema';
 import { User } from '../command/domain/entities/user.entity';
 import { UserRepository } from '../command/domain/repository/user.repository';
-
 @Injectable()
 export class UserRepositoryImpl implements UserRepository {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    @Inject(DrizzleAsyncProvider) private db: NeonHttpDatabase<typeof schema>,
+  ) {}
 
   async save(user: User): Promise<void> {
-    await this.prismaService.user.upsert({
-      create: {
+    await this.db
+      .insert(schema.user)
+      .values({
         id: user.id.toString(),
         email: user.email,
-        password: user.password,
         nickName: user.nickName,
+        password: user.password,
         createBy: user.createBy,
         createdAt: user.createdAt.toDate(),
-      },
-      update: {
-        email: user.email,
-        password: user.password,
-        nickName: user.nickName,
-        lastLoginDate: user?.lastLoginDate?.toDate(),
-        signOutDate: user?.signOutDate?.toDate(),
-        updateBy: user?.updateBy,
-        updatedAt: user?.updatedAt?.toDate(),
-        deleteBy: user?.deleteBy,
-        deletedAt: user?.deletedAt?.toDate(),
-      },
-      where: {
-        id: user.id.toString(),
-      },
-    });
+      })
+      .onConflictDoUpdate({
+        target: [schema.user.id],
+        set: {
+          email: user.email,
+          password: user.password,
+          nickName: user.nickName,
+          lastLoginDate: user?.lastLoginDate?.toDate(),
+          signOutDate: user?.signOutDate?.toDate(),
+          updateBy: user?.updateBy,
+          updatedAt: user?.updatedAt?.toDate(),
+          deleteBy: user?.deleteBy,
+          deletedAt: user?.deletedAt?.toDate(),
+        },
+        where: eq(schema.user.id, user.id.toString()),
+      });
   }
 
   async findById(id: UserId): Promise<User> {
-    const savedUser = await this.prismaService.user.findUnique({
-      where: {
-        id: id.toString(),
-        deletedAt: null,
-      },
+    const savedUser = await this.db.query.user.findFirst({
+      where: and(
+        eq(schema.user.id, id.toString()),
+        isNull(schema.user.deletedAt),
+      ),
     });
-
     return await this.convertToDomain(savedUser);
   }
 
   async findByEmail(email: string): Promise<User> {
-    const savedUser = await this.prismaService.user.findFirst({
-      where: {
-        email: email,
-        deletedAt: null,
-      },
+    const savedUser = await this.db.query.user.findFirst({
+      where: and(eq(schema.user.email, email), isNull(schema.user.deletedAt)),
     });
 
     return await this.convertToDomain(savedUser);
   }
-
-  private async convertToDomain(prismaUser: PrismaUser): Promise<User> {
-    if (!prismaUser) return undefined;
+  private async convertToDomain(drizzleUser: schema.SelectUser): Promise<User> {
+    if (!drizzleUser) return undefined;
     return await User.create({
-      ...prismaUser,
+      ...drizzleUser,
 
-      id: UserId.of(prismaUser),
+      id: UserId.of({ id: drizzleUser.id }),
     });
   }
 }

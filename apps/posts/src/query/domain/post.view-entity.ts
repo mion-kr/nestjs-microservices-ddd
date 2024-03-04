@@ -1,5 +1,4 @@
-import { IUserView } from '@app/common';
-import { Post } from '@prisma/client';
+import { IUserView, SelectPost } from '@app/common';
 
 export class PostView {
   id: string;
@@ -13,7 +12,7 @@ export class PostView {
   likeUsers: IUserView[];
   isUse: boolean;
 
-  static async create(params: Post) {
+  static async create(params: SelectPost) {
     const { id, title, content, writer, imageUrls, likeUserIds, isUse } =
       params;
 

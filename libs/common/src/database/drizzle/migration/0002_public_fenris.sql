@@ -1,0 +1,1 @@
+ALTER TABLE "post" ADD COLUMN "like_user_ids" uuid[];

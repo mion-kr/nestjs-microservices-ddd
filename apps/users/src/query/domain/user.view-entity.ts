@@ -1,5 +1,5 @@
-import { User } from '@prisma/client';
 import * as dayjs from 'dayjs';
+import { SelectUser } from '../../../../../libs/common/src';
 
 export class UserView {
   id: string;
@@ -17,7 +17,7 @@ export class UserView {
   deleteBy: string;
   deletedAt: dayjs.Dayjs;
 
-  static async create(params: User) {
+  static async create(params: SelectUser) {
     const {
       id,
       email,

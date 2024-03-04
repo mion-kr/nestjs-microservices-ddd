@@ -1,0 +1,1 @@
+ALTER TABLE "postComment" ALTER COLUMN "parent_comment_id" SET DATA TYPE char(21);

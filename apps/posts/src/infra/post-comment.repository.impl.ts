@@ -1,11 +1,14 @@
-import { PrismaService, UserId } from '@app/common';
+import { DrizzleAsyncProvider, UserId } from '@app/common';
 import {
+  Inject,
   Injectable,
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { PostComment as PrismaPostComment } from '@prisma/client';
 import * as dayjs from 'dayjs';
+import { and, eq } from 'drizzle-orm';
+import { NeonHttpDatabase } from 'drizzle-orm/neon-http';
+import * as schema from 'libs/common/src/database/drizzle/schema';
 import { PostComment } from '../command/domain/entities/post-comment.entity';
 import { PostCommentId } from '../command/domain/entities/post-comment.id';
 import { PostId } from '../command/domain/entities/post.id';
@@ -13,12 +16,15 @@ import { PostCommentRepository } from '../command/domain/repository/post-comment
 
 @Injectable()
 export class PostCommentRepositoryImpl implements PostCommentRepository {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    @Inject(DrizzleAsyncProvider) private db: NeonHttpDatabase<typeof schema>,
+  ) {}
 
   async save(postComment: PostComment): Promise<void> {
     try {
-      await this.prismaService.postComment.upsert({
-        create: {
+      await this.db
+        .insert(schema.postComment)
+        .values({
           id: postComment.id.toString(),
           postId: postComment.postId.toString(),
           comment: postComment.comment,
@@ -28,22 +34,22 @@ export class PostCommentRepositoryImpl implements PostCommentRepository {
           parentCommentId: postComment.parentCommentId?.toString(),
           createBy: postComment.createBy,
           createdAt: postComment.createdAt.toDate(),
-        },
-        update: {
-          comment: postComment.comment,
-          likeUserIds: postComment.likeUserIds.map((userId) =>
-            userId.toString(),
-          ),
-          isUse: postComment.isUse,
-          updateBy: postComment?.updateBy,
-          updatedAt: postComment?.updatedAt.toDate(),
-          deleteBy: postComment?.updateBy,
-          deletedAt: postComment?.deletedAt?.toDate(),
-        },
-        where: {
-          id: postComment.id.toString(),
-        },
-      });
+        })
+        .onConflictDoUpdate({
+          target: [schema.postComment.id],
+          set: {
+            comment: postComment.comment,
+            likeUserIds: postComment.likeUserIds.map((userId) =>
+              userId.toString(),
+            ),
+            isUse: postComment.isUse,
+            updateBy: postComment?.updateBy,
+            updatedAt: postComment?.updatedAt.toDate(),
+            deleteBy: postComment?.updateBy,
+            deletedAt: postComment?.deletedAt?.toDate(),
+          },
+          where: eq(schema.postComment.id, postComment.id.toString()),
+        });
     } catch (error) {
       Logger.error({ message: error.message, stack: error.stack });
       throw new InternalServerErrorException(`PostComment save error`);
@@ -51,39 +57,33 @@ export class PostCommentRepositoryImpl implements PostCommentRepository {
   }
 
   async findById(id: PostCommentId): Promise<PostComment> {
-    const savedPost = await this.prismaService.postComment.findUnique({
-      where: {
-        id: id.toString(),
-        deletedAt: null,
-      },
+    const savedComment = await this.db.query.postComment.findFirst({
+      where: and(
+        eq(schema.postComment.id, id.toString()),
+        eq(schema.postComment.deletedAt, null),
+      ),
     });
 
-    return await this.convertToDomain(savedPost);
+    return await this.convertToDomain(savedComment);
   }
 
   private async convertToDomain(
-    prismaPost: PrismaPostComment,
+    comment: schema.SelectPostComment,
   ): Promise<PostComment> {
-    if (!prismaPost) return undefined;
+    if (!comment) return undefined;
     return await PostComment.create({
-      ...prismaPost,
-      likeUserIds: prismaPost.likeUserIds.map((userId) =>
+      ...comment,
+      likeUserIds: comment.likeUserIds.map((userId) =>
         UserId.of({ id: userId }),
       ),
 
-      writer: UserId.of({ id: prismaPost.writer }),
-      id: PostCommentId.of({ id: prismaPost.id }),
-      postId: PostId.of({ id: prismaPost.postId }),
-      parentCommentId: PostCommentId.of({ id: prismaPost.parentCommentId }),
-      createdAt: prismaPost?.createdAt
-        ? dayjs(prismaPost.createdAt)
-        : undefined,
-      updatedAt: prismaPost?.updatedAt
-        ? dayjs(prismaPost.updatedAt)
-        : undefined,
-      deletedAt: prismaPost?.deletedAt
-        ? dayjs(prismaPost.deletedAt)
-        : undefined,
+      writer: UserId.of({ id: comment.writer }),
+      id: PostCommentId.of({ id: comment.id }),
+      postId: PostId.of({ id: comment.postId }),
+      parentCommentId: PostCommentId.of({ id: comment.parentCommentId }),
+      createdAt: comment?.createdAt ? dayjs(comment.createdAt) : undefined,
+      updatedAt: comment?.updatedAt ? dayjs(comment.updatedAt) : undefined,
+      deletedAt: comment?.deletedAt ? dayjs(comment.deletedAt) : undefined,
     });
   }
 }

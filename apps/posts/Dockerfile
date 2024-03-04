@@ -6,7 +6,6 @@ COPY package.json ./
 COPY pnpm-lock.yaml ./
 COPY tsconfig.json tsconfig.json
 COPY nest-cli.json nest-cli.json
-COPY prisma ./prisma/
 
 RUN npm install -g pnpm
 
@@ -21,8 +20,6 @@ COPY libs libs
 
 
 RUN pnpm install -r --frozen-lockfile 
-
-RUN npx prisma generate
 
 RUN pnpm run build posts
 

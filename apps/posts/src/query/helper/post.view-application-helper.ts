@@ -39,7 +39,7 @@ export class PostViewApplicationHelper {
     queryBus: QueryBus,
   ) {
     const likeUsers = new Set<string>();
-    datas.map((data) => data.likeUserIds.map((id) => likeUsers.add(id)));
+    datas.map((data) => data.likeUserIds?.map((id) => likeUsers.add(id)));
 
     const users = await queryBus.execute<FindByIdsUsersQuery>(
       new FindByIdsUsersQuery({

@@ -1,0 +1,1 @@
+ALTER TABLE "postComment" ADD COLUMN "like_user_ids" char(21)[];

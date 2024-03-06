@@ -1,0 +1,1 @@
+ALTER TABLE "post" ALTER COLUMN "like_user_ids" SET DATA TYPE char(21)[];

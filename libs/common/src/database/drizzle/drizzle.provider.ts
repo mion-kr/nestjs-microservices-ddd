@@ -1,20 +1,18 @@
-import { Pool, neonConfig } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-serverless';
-// import { drizzle } from 'drizzle-orm/neon-http';
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { Pool } from 'pg';
 import * as schema from './schema';
-// import { neon } from '@neondatabase/serverless';
-// import ws from 'ws';
-import ws from '@nestjs/websockets';
 
+/**
+ * @neondatabase/serverless 패키지를 사용하니 pool 연결 시 오류가 발생 합니다.
+ */
 export const DrizzleAsyncProvider = 'drizzleProvider';
 export const DrizzleProvider = [
   {
     provide: DrizzleAsyncProvider,
     useFactory: async () => {
-      // const sql = neon(process.env.DATABASE_URL!); // http
-      // const pool = new Pool({ connectionString: process.env.DATABASE_URL! });
-      neonConfig.webSocketConstructor = ws;
-      const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+      const pool = new Pool({
+        connectionString: process.env.DATABASE_URL,
+      });
 
       const db = drizzle(pool, { schema: schema });
       return db;

@@ -2,7 +2,7 @@ import { DrizzleAsyncProvider, ImageUrl, UserId } from '@app/common';
 import { Inject, Injectable } from '@nestjs/common';
 import * as dayjs from 'dayjs';
 import { and, eq, isNull } from 'drizzle-orm';
-import { NeonHttpDatabase } from 'drizzle-orm/neon-http';
+import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as schema from 'libs/common/src/database/drizzle/schema';
 import { Post } from '../command/domain/entities/post.entity';
 import { PostId } from '../command/domain/entities/post.id';
@@ -11,7 +11,7 @@ import { PostRepository } from '../command/domain/repository/post.repository';
 @Injectable()
 export class PostRepositoryImpl implements PostRepository {
   constructor(
-    @Inject(DrizzleAsyncProvider) private db: NeonHttpDatabase<typeof schema>,
+    @Inject(DrizzleAsyncProvider) private db: NodePgDatabase<typeof schema>,
   ) {}
 
   async save(post: Post): Promise<void> {
@@ -20,9 +20,9 @@ export class PostRepositoryImpl implements PostRepository {
       .values({
         id: post.id.toString(),
         title: post.title,
-        content: post.content,
+        content: post?.content,
         writer: post.writer.toString(),
-        imageUrls: post.images.map((image) => image.url),
+        imageUrls: post.images?.map((image) => image.url),
         createBy: post.createBy,
         createdAt: post.createdAt.toDate(),
       })
@@ -30,9 +30,9 @@ export class PostRepositoryImpl implements PostRepository {
         target: [schema.post.id],
         set: {
           title: post.title,
-          content: post.content,
-          imageUrls: post.images.map((image) => image.url),
-          likeUserIds: post.likeUserIds.map((userId) => userId.toString()),
+          content: post?.content,
+          imageUrls: post.images?.map((image) => image.url),
+          likeUserIds: post.likeUserIds?.map((userId) => userId.toString()),
           updateBy: post?.updateBy,
           updatedAt: post?.updatedAt?.toDate(),
           deleteBy: post?.deleteBy,
@@ -57,8 +57,8 @@ export class PostRepositoryImpl implements PostRepository {
     if (!drizzlePost) return undefined;
     return await Post.create({
       ...drizzlePost,
-      images: drizzlePost.imageUrls.map((url) => ImageUrl.of({ url })),
-      likeUserIds: drizzlePost.likeUserIds.map((userId) =>
+      images: drizzlePost.imageUrls?.map((url) => ImageUrl.of({ url })),
+      likeUserIds: drizzlePost.likeUserIds?.map((userId) =>
         UserId.of({ id: userId }),
       ),
 

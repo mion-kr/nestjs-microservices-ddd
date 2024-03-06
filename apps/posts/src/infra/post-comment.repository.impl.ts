@@ -6,8 +6,8 @@ import {
   Logger,
 } from '@nestjs/common';
 import * as dayjs from 'dayjs';
-import { and, eq } from 'drizzle-orm';
-import { NeonHttpDatabase } from 'drizzle-orm/neon-http';
+import { and, eq, isNull } from 'drizzle-orm';
+import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as schema from 'libs/common/src/database/drizzle/schema';
 import { PostComment } from '../command/domain/entities/post-comment.entity';
 import { PostCommentId } from '../command/domain/entities/post-comment.id';
@@ -17,7 +17,7 @@ import { PostCommentRepository } from '../command/domain/repository/post-comment
 @Injectable()
 export class PostCommentRepositoryImpl implements PostCommentRepository {
   constructor(
-    @Inject(DrizzleAsyncProvider) private db: NeonHttpDatabase<typeof schema>,
+    @Inject(DrizzleAsyncProvider) private db: NodePgDatabase<typeof schema>,
   ) {}
 
   async save(postComment: PostComment): Promise<void> {
@@ -39,12 +39,12 @@ export class PostCommentRepositoryImpl implements PostCommentRepository {
           target: [schema.postComment.id],
           set: {
             comment: postComment.comment,
-            likeUserIds: postComment.likeUserIds.map((userId) =>
+            likeUserIds: postComment?.likeUserIds?.map((userId) =>
               userId.toString(),
             ),
             isUse: postComment.isUse,
             updateBy: postComment?.updateBy,
-            updatedAt: postComment?.updatedAt.toDate(),
+            updatedAt: postComment?.updatedAt?.toDate(),
             deleteBy: postComment?.updateBy,
             deletedAt: postComment?.deletedAt?.toDate(),
           },
@@ -60,7 +60,7 @@ export class PostCommentRepositoryImpl implements PostCommentRepository {
     const savedComment = await this.db.query.postComment.findFirst({
       where: and(
         eq(schema.postComment.id, id.toString()),
-        eq(schema.postComment.deletedAt, null),
+        isNull(schema.postComment.deletedAt),
       ),
     });
 
@@ -73,7 +73,7 @@ export class PostCommentRepositoryImpl implements PostCommentRepository {
     if (!comment) return undefined;
     return await PostComment.create({
       ...comment,
-      likeUserIds: comment.likeUserIds.map((userId) =>
+      likeUserIds: comment.likeUserIds?.map((userId) =>
         UserId.of({ id: userId }),
       ),
 

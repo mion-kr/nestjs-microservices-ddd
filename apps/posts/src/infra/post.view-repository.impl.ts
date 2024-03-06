@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { isObject } from '@nestjs/common/utils/shared.utils';
-import { and, eq, isNull } from 'drizzle-orm';
-import { NeonHttpDatabase } from 'drizzle-orm/neon-http';
+import { and, eq, isNull, sql } from 'drizzle-orm';
+import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as schema from 'libs/common/src/database/drizzle/schema';
 import {
   DrizzleAsyncProvider,
@@ -15,7 +14,7 @@ import { PostViewRepository } from '../query/domain/post.view-repository';
 @Injectable()
 export class PostViewRepositoryImpl implements PostViewRepository {
   constructor(
-    @Inject(DrizzleAsyncProvider) private db: NeonHttpDatabase<typeof schema>,
+    @Inject(DrizzleAsyncProvider) private db: NodePgDatabase<typeof schema>,
   ) {}
 
   async findAll<Params extends FindAllQuery>(
@@ -39,22 +38,23 @@ export class PostViewRepositoryImpl implements PostViewRepository {
     //   }),
     // ]);
 
-    const [savedPosts, count] = await this.db.transaction<[PostView[], number]>(
-      async (tx) => {
-        const savedPosts = await tx.query.post.findMany({
-          where: isNull(schema.post.deletedAt),
-          offset: skip,
-          limit: size,
-        });
+    // const [savedPosts, count] = await this.db.transaction<[PostView[], number]>(
 
-        const countPosts = await tx
-          .select(count(schema.post.id))
-          .from(schema.post)
-          .where(isNull(schema.post.deletedAt));
+    const [savedPosts, count] = await this.db.transaction<
+      [schema.SelectPost[], number]
+    >(async (tx) => {
+      const savedPosts = await tx.query.post.findMany({
+        where: isNull(schema.post.deletedAt),
+        offset: skip,
+        limit: size,
+      });
 
-        return [savedPosts, countPosts];
-      },
-    );
+      const countPosts = await tx
+        .select({ count: sql<number>`cast(count(*) as int)` })
+        .from(schema.post)
+        .where(isNull(schema.post.deletedAt));
+      return [savedPosts, countPosts[0].count];
+    });
 
     const fnMap = async (savedPost) => await PostView.create(savedPost);
     const posts = await Promise.all(savedPosts.map(fnMap));
@@ -63,12 +63,6 @@ export class PostViewRepositoryImpl implements PostViewRepository {
   }
 
   async findById(id: PostId): Promise<PostView> {
-    // const savedPost = await this.prismaService.post.findUnique({
-    //   where: {
-    //     id: id.toString(),
-    //     deletedAt: null,
-    //   },
-    // });
     const savedPost = await this.db.query.post.findFirst({
       where: and(
         eq(schema.post.id, id.toString()),
@@ -76,7 +70,7 @@ export class PostViewRepositoryImpl implements PostViewRepository {
       ),
     });
 
-    if (!isObject(savedPost)) throw new NotFoundPostException(id);
+    if (!savedPost) throw new NotFoundPostException(id);
     const post = await PostView.create(savedPost);
 
     return post;

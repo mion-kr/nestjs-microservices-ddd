@@ -5,7 +5,6 @@ import {
   pgTable,
   text,
   timestamp,
-  uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
 import { postComment } from './post-comment.schema';
@@ -21,8 +20,7 @@ export const post = pgTable('post', {
   isUse: boolean('is_use').default(true),
   imageUrls: text('image_urls').array(),
   lastLoginDate: timestamp('last_login_date', { withTimezone: true }),
-  likeUserIds: uuid('like_user_ids').array(),
-
+  likeUserIds: char('like_user_ids', { length: 21 }).array(),
   createBy: varchar('create_by', { length: 100 }).notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
   updateBy: varchar('update_by', { length: 100 }),

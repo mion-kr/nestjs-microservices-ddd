@@ -2,7 +2,7 @@ import { DrizzleAsyncProvider, FindAllQuery } from '@app/common';
 import { Inject, Injectable } from '@nestjs/common';
 import { isObject } from '@nestjs/common/utils/shared.utils';
 import { and, eq, inArray, isNull } from 'drizzle-orm';
-import { NeonHttpDatabase } from 'drizzle-orm/neon-http';
+import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { UserId } from '../../../../libs/common/src/cqrs/command/users/user.id';
 import * as schema from '../../../../libs/common/src/database/drizzle/schema';
 import { NotFoundUserException } from '../exception/not-found-user.exception';
@@ -12,7 +12,7 @@ import { UserViewRepository } from '../query/domain/user.view-repository';
 @Injectable()
 export class UserViewRepositoryImpl implements UserViewRepository {
   constructor(
-    @Inject(DrizzleAsyncProvider) private db: NeonHttpDatabase<typeof schema>,
+    @Inject(DrizzleAsyncProvider) private db: NodePgDatabase<typeof schema>,
   ) {}
 
   async findAll<Params extends FindAllQuery>(
@@ -41,14 +41,7 @@ export class UserViewRepositoryImpl implements UserViewRepository {
   }
 
   async findByIds(ids: UserId[]): Promise<UserView[]> {
-    // const savedUsers = await this.prismaService.user.findMany({
-    //   where: {
-    //     id: {
-    //       in: ids.map((id) => id.toString()),
-    //     },
-    //   },
-    // });
-
+    if (ids.length === 0) return [];
     const savedUsers = await this.db.query.user.findMany({
       where: inArray(
         schema.user.id,

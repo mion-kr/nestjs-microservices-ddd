@@ -36,6 +36,34 @@
       "when": 1709519436289,
       "tag": "0004_daily_talon",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1709614722407,
+      "tag": "0005_windy_whistler",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1709614744877,
+      "tag": "0006_milky_wrecking_crew",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1709614794770,
+      "tag": "0007_soft_mac_gargan",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1709687841767,
+      "tag": "0008_cold_payback",
+      "breakpoints": true
     }
   ]
 }

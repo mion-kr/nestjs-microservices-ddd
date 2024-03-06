@@ -24,6 +24,7 @@ export const postComment = pgTable('postComment', {
     .notNull(),
   isUse: boolean('is_use').default(true),
   lastLoginDate: timestamp('last_login_date', { withTimezone: true }),
+  likeUserIds: char('like_user_ids', { length: 21 }).array(),
 
   createBy: varchar('create_by', { length: 100 }).notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull(),

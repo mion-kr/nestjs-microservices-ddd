@@ -1,6 +1,6 @@
 import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
 import { UserId } from '../../../../../libs/common/src';
-import { NotFoundPostCommentException } from '../../exception/not-found-post-comment.exception';
+import { NotFoundCommentPostsException } from '../../exception/not-found-comment.posts.exception';
 import { PostCommentRepositoryImpl } from '../../infra/post-comment.repository.impl';
 import { PostRepositoryImpl } from '../../infra/post.repository.impl';
 import { PostComment } from '../domain/entities/post-comment.entity';
@@ -54,10 +54,10 @@ export class AddLikeCommentPostsCommandHandler
     params: { post: Post; postComment: PostComment },
   ) {
     const { post, postComment } = params;
-    if (!post) throw new NotFoundPostCommentException(post.id);
+    if (!post) throw new NotFoundCommentPostsException(post.id);
 
     if (!postComment)
-      throw new NotFoundPostCommentException(
+      throw new NotFoundCommentPostsException(
         PostCommentId.of({ id: command.postCommentId }),
       );
   }

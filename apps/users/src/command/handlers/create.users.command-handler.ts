@@ -9,9 +9,9 @@ import { nanoid } from 'nanoid';
 import { UserId } from '../../../../../libs/common/src/cqrs/command/users/user.id';
 import { FindByEmailUsersQuery } from '../../../../../libs/common/src/cqrs/query/users/impl/find-by-email.users.query';
 import { CreatedUserEvent } from '../../event/impl/created.user.event';
-import { DuplicateEmailException } from '../../exception/duplicate-email.exception';
-import { DuplicateNicknameException } from '../../exception/duplicate-nickname.exception';
-import { NotFoundUserException } from '../../exception/not-found-user.exception';
+import { DuplicateEmailUsersException } from '../../exception/duplicate-email.users.exception';
+import { DuplicateNicknameUsersException } from '../../exception/duplicate-nickname.users.exception';
+import { NotFoundUsersException } from '../../exception/not-found.users.exception';
 import { UserRepositoryImpl } from '../../infra/user.repository.impl';
 import { FindByNicknameUsersQuery } from '../../query/impl/find-by-nickname.users.query';
 import { User } from '../domain/entities/user.entity';
@@ -63,9 +63,9 @@ export class CreateCommandHandler
       const savedEmail = await this.queryBus.execute<FindByEmailUsersQuery>(
         new FindByEmailUsersQuery(command),
       );
-      if (savedEmail) throw new DuplicateEmailException(command.email);
+      if (savedEmail) throw new DuplicateEmailUsersException(command.email);
     } catch (error) {
-      if (!(error instanceof NotFoundUserException)) throw error;
+      if (!(error instanceof NotFoundUsersException)) throw error;
     }
   }
 
@@ -79,9 +79,10 @@ export class CreateCommandHandler
         await this.queryBus.execute<FindByNicknameUsersQuery>(
           new FindByNicknameUsersQuery(command),
         );
-      if (savedNickname) throw new DuplicateNicknameException(command.nickName);
+      if (savedNickname)
+        throw new DuplicateNicknameUsersException(command.nickName);
     } catch (error) {
-      if (!(error instanceof NotFoundUserException)) throw error;
+      if (!(error instanceof NotFoundUsersException)) throw error;
     }
   }
 

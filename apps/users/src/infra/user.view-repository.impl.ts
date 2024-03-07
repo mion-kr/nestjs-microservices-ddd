@@ -5,7 +5,7 @@ import { and, eq, inArray, isNull } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { UserId } from '../../../../libs/common/src/cqrs/command/users/user.id';
 import * as schema from '../../../../libs/common/src/database/drizzle/schema';
-import { NotFoundUserException } from '../exception/not-found-user.exception';
+import { NotFoundUsersException } from '../exception/not-found.users.exception';
 import { UserView } from '../query/domain/user.view-entity';
 import { UserViewRepository } from '../query/domain/user.view-repository';
 
@@ -35,7 +35,7 @@ export class UserViewRepositoryImpl implements UserViewRepository {
         isNull(schema.user.deletedAt),
       ),
     });
-    if (!isObject(savedUser)) throw new NotFoundUserException();
+    if (!isObject(savedUser)) throw new NotFoundUsersException();
 
     return await UserView.create(savedUser);
   }
@@ -64,7 +64,7 @@ export class UserViewRepositoryImpl implements UserViewRepository {
     const savedUser = await this.db.query.user.findFirst({
       where: and(eq(schema.user.email, email), isNull(schema.user.deletedAt)),
     });
-    if (!isObject(savedUser)) throw new NotFoundUserException();
+    if (!isObject(savedUser)) throw new NotFoundUsersException();
 
     return await UserView.create(savedUser);
   }
@@ -82,7 +82,7 @@ export class UserViewRepositoryImpl implements UserViewRepository {
         isNull(schema.user.deletedAt),
       ),
     });
-    if (!isObject(savedUser)) throw new NotFoundUserException();
+    if (!isObject(savedUser)) throw new NotFoundUsersException();
 
     return await UserView.create(savedUser);
   }

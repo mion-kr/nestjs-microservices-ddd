@@ -1,8 +1,8 @@
 import * as dayjs from 'dayjs';
 import { nanoid } from 'nanoid';
 import { ImageUrl, UserId } from '../../../../../../libs/common/src';
-import { AlreadyPostLikedUserException } from '../../../exception/already-post-liked-user.exception';
-import { NotPostLikedUserException } from '../../../exception/not-post-liked-user.exception';
+import { AlreadyLikedPostsException } from '../../../exception/already-liked.posts.exception';
+import { NotLikedPostsException } from '../../../exception/not-liked.posts.exception';
 import { Post } from './post.entity';
 import { PostId } from './post.id';
 
@@ -37,7 +37,7 @@ describe('post', () => {
       };
 
       await expect(result).rejects.toThrowError(
-        new AlreadyPostLikedUserException(post.id, userId),
+        new AlreadyLikedPostsException(post.id, userId),
       );
     });
   });
@@ -62,7 +62,7 @@ describe('post', () => {
       };
 
       await expect(result).rejects.toThrowError(
-        new NotPostLikedUserException(post.id, userId),
+        new NotLikedPostsException(post.id, userId),
       );
     });
   });

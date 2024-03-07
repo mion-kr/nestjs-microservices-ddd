@@ -8,9 +8,9 @@ import {
 import { Expose, Transform } from 'class-transformer';
 import { IsBoolean, IsObject, IsOptional, IsString } from 'class-validator';
 import * as dayjs from 'dayjs';
-import { AlreadyPostCommentLikedUserException } from '../../../exception/already-post-comment-liked-user.exception';
-import { NotMatchUserException } from '../../../exception/not-match-user.exception';
-import { NotPostCommentLikedUserException } from '../../../exception/not-post-comment-liked-user.exception';
+import { AlreadyLikedCommentPostException } from '../../../exception/already-liked-comment.posts.exception';
+import { NotLikedCommentPostsException } from '../../../exception/not-liked-comment.posts.exception';
+import { NotMatchUserPostsException } from '../../../exception/not-match-user.posts.exception';
 import { PostCommentId } from './post-comment.id';
 import { PostId } from './post.id';
 
@@ -100,7 +100,7 @@ export class PostComment
     const { comment, isUse, updateBy } = params;
 
     if (!this.isMatchWriter(UserId.of({ id: updateBy }))) {
-      throw new NotMatchUserException();
+      throw new NotMatchUserPostsException();
     }
 
     this._comment = comment ?? this._comment;
@@ -115,7 +115,7 @@ export class PostComment
     const { isUse, updateBy } = params;
 
     if (!this.isMatchWriter(UserId.of({ id: updateBy }))) {
-      throw new NotMatchUserException();
+      throw new NotMatchUserPostsException();
     }
 
     this._isUse = isUse;
@@ -128,7 +128,7 @@ export class PostComment
     const { deleteBy } = params;
 
     if (!this.isMatchWriter(UserId.of({ id: deleteBy }))) {
-      throw new NotMatchUserException();
+      throw new NotMatchUserPostsException();
     }
 
     this._isUse = false;
@@ -155,7 +155,7 @@ export class PostComment
     const { userId } = params;
 
     if (this.getLikedUserByUserId(userId)) {
-      throw new AlreadyPostCommentLikedUserException(this.id, userId);
+      throw new AlreadyLikedCommentPostException(this.id, userId);
     }
 
     this._likeUserIds.push(userId);
@@ -169,7 +169,7 @@ export class PostComment
     const { userId } = params;
 
     if (!this.getLikedUserByUserId(userId)) {
-      throw new NotPostCommentLikedUserException(this._id, userId);
+      throw new NotLikedCommentPostsException(this._id, userId);
     }
 
     this._likeUserIds = this._likeUserIds.filter(

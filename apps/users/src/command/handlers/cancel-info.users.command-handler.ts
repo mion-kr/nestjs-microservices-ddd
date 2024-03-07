@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserId } from '../../../../../libs/common/src/cqrs/command/users/user.id';
-import { NotFoundUserException } from '../../exception/not-found-user.exception';
+import { NotFoundUsersException } from '../../exception/not-found.users.exception';
 import { UserRepositoryImpl } from '../../infra/user.repository.impl';
 import { UserRepository } from '../domain/repository/user.repository';
 import { CancelUsersCommand } from '../impl/cancel.users.command';
@@ -20,7 +20,7 @@ export class CancelUsersCommandHandler
       const userId = UserId.of({ id: command.idValue });
 
       const user = await this.userRepository.findById(userId);
-      if (!user) throw new NotFoundUserException();
+      if (!user) throw new NotFoundUsersException();
 
       user.cancel();
 
@@ -30,7 +30,7 @@ export class CancelUsersCommandHandler
 
       return userId;
     } catch (error) {
-      if (error instanceof NotFoundUserException) throw error;
+      if (error instanceof NotFoundUsersException) throw error;
 
       throw new Error(`사용자 탈퇴 작업 중 오류가 발생 하였습니다.`);
     }

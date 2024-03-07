@@ -9,9 +9,9 @@ import {
 import { Expose } from 'class-transformer';
 import { IsNotEmpty, IsString } from 'class-validator';
 import * as dayjs from 'dayjs';
-import { AlreadyPostLikedUserException } from '../../../exception/already-post-liked-user.exception';
-import { NotMatchUserException } from '../../../exception/not-match-user.exception';
-import { NotPostLikedUserException } from '../../../exception/not-post-liked-user.exception';
+import { AlreadyLikedPostsException } from '../../../exception/already-liked.posts.exception';
+import { NotLikedPostsException } from '../../../exception/not-liked.posts.exception';
+import { NotMatchUserPostsException } from '../../../exception/not-match-user.posts.exception';
 import { PostId } from './post.id';
 
 export class Post
@@ -87,7 +87,7 @@ export class Post
     const { title, content, images, isUse, updateBy } = params;
 
     if (!this.isMatchWriter(UserId.of({ id: updateBy }))) {
-      throw new NotMatchUserException();
+      throw new NotMatchUserPostsException();
     }
 
     this._title = title ?? this._title;
@@ -104,7 +104,7 @@ export class Post
     const { isUse, updateBy } = params;
 
     if (!this.isMatchWriter(UserId.of({ id: updateBy }))) {
-      throw new NotMatchUserException();
+      throw new NotMatchUserPostsException();
     }
 
     this._isUse = isUse;
@@ -117,7 +117,7 @@ export class Post
     const { deleteBy } = params;
 
     if (!this.isMatchWriter(UserId.of({ id: deleteBy }))) {
-      throw new NotMatchUserException();
+      throw new NotMatchUserPostsException();
     }
 
     this._isUse = false;
@@ -144,7 +144,7 @@ export class Post
     const { userId } = params;
 
     if (this.getLikedUserByUserId(userId)) {
-      throw new AlreadyPostLikedUserException(this.id, userId);
+      throw new AlreadyLikedPostsException(this.id, userId);
     }
 
     this._likeUserIds.push(userId);
@@ -158,7 +158,7 @@ export class Post
     const { userId } = params;
 
     if (!this.getLikedUserByUserId(userId)) {
-      throw new NotPostLikedUserException(this._id, userId);
+      throw new NotLikedPostsException(this._id, userId);
     }
 
     this._likeUserIds = this._likeUserIds.filter(

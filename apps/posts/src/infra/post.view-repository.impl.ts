@@ -7,7 +7,7 @@ import {
   FindAllQuery,
 } from '../../../../libs/common/src';
 import { PostId } from '../command/domain/entities/post.id';
-import { NotFoundPostException } from '../exception/not-found-post.exception';
+import { NotFoundPostsException } from '../exception/not-found.posts.exception';
 import { PostView } from '../query/domain/post.view-entity';
 import { PostViewRepository } from '../query/domain/post.view-repository';
 
@@ -70,7 +70,7 @@ export class PostViewRepositoryImpl implements PostViewRepository {
       ),
     });
 
-    if (!savedPost) throw new NotFoundPostException(id);
+    if (!savedPost) throw new NotFoundPostsException(id);
     const post = await PostView.create(savedPost);
 
     return post;

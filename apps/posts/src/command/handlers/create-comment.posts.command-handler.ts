@@ -2,8 +2,8 @@ import { UserId } from '@app/common';
 import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
 import * as dayjs from 'dayjs';
 import { nanoid } from 'nanoid';
-import { NotFoundPostCommentException } from '../../exception/not-found-post-comment.exception';
-import { NotFoundPostException } from '../../exception/not-found-post.exception';
+import { NotFoundCommentPostsException } from '../../exception/not-found-comment.posts.exception';
+import { NotFoundPostsException } from '../../exception/not-found.posts.exception';
 import { PostCommentRepositoryImpl } from '../../infra/post-comment.repository.impl';
 import { PostRepositoryImpl } from '../../infra/post.repository.impl';
 import { PostComment } from '../domain/entities/post-comment.entity';
@@ -52,7 +52,7 @@ export class CreateCommentPostsCommandHandler
   ) {
     const { post } = params;
     if (!post)
-      throw new NotFoundPostException(PostId.of({ id: command.postId }));
+      throw new NotFoundPostsException(PostId.of({ id: command.postId }));
 
     // 부모 댓글 ID가 있으면 부모 댓글이 존재하는지 유효성 검사를 합니다.
     if (command.parentCommentId) {
@@ -60,7 +60,7 @@ export class CreateCommentPostsCommandHandler
         command.parentCommentId,
       );
       if (!parentComment)
-        throw new NotFoundPostCommentException(command.parentCommentId);
+        throw new NotFoundCommentPostsException(command.parentCommentId);
     }
   }
 

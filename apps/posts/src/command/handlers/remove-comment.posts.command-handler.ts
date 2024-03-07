@@ -1,6 +1,6 @@
 import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
-import { NotFoundPostCommentException } from '../../exception/not-found-post-comment.exception';
-import { NotFoundPostException } from '../../exception/not-found-post.exception';
+import { NotFoundCommentPostsException } from '../../exception/not-found-comment.posts.exception';
+import { NotFoundPostsException } from '../../exception/not-found.posts.exception';
 import { PostCommentRepositoryImpl } from '../../infra/post-comment.repository.impl';
 import { PostRepositoryImpl } from '../../infra/post.repository.impl';
 import { PostComment } from '../domain/entities/post-comment.entity';
@@ -55,10 +55,10 @@ export class RemoveCommentPostsCommandHandler
   ) {
     const { post, postComment } = params;
     if (!post)
-      throw new NotFoundPostException(PostId.of({ id: command.postId }));
+      throw new NotFoundPostsException(PostId.of({ id: command.postId }));
 
     if (!postComment)
-      throw new NotFoundPostCommentException(
+      throw new NotFoundCommentPostsException(
         PostCommentId.of({ id: command.postCommentId }),
       );
   }

@@ -1,6 +1,6 @@
 import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
 import { UserId } from '../../../../../libs/common/src';
-import { NotFoundPostException } from '../../exception/not-found-post.exception';
+import { NotFoundPostsException } from '../../exception/not-found.posts.exception';
 import { PostRepositoryImpl } from '../../infra/post.repository.impl';
 import { Post } from '../domain/entities/post.entity';
 import { PostId } from '../domain/entities/post.id';
@@ -40,7 +40,7 @@ export class AddLikePostsCommandHandler
 
   private async validate(command: AddLikePostsCommand, post: Post) {
     if (!post) {
-      throw new NotFoundPostException(post.id);
+      throw new NotFoundPostsException(post.id);
     }
   }
 

@@ -1,4 +1,4 @@
-export class RemoveLikePostsCommentCommand {
+export class AddLikeCommentPostsCommand {
   postId: string;
   postCommentId: string;
   userId: string;

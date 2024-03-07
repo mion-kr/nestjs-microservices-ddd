@@ -9,11 +9,11 @@ import { Post } from '../domain/entities/post.entity';
 import { PostId } from '../domain/entities/post.id';
 import { PostCommentRepository } from '../domain/repository/post-comment.repository';
 import { PostRepository } from '../domain/repository/post.repository';
-import { EditPostsCommentCommand } from '../impl/edit.posts-comment.command';
+import { EditCommentPostsCommand } from '../impl/edit-comment.posts.command';
 
-@CommandHandler(EditPostsCommentCommand)
-export class EditPostsCommentCommandHandler
-  implements ICommandHandler<EditPostsCommentCommand>
+@CommandHandler(EditCommentPostsCommand)
+export class EditCommentPostsCommandHandler
+  implements ICommandHandler<EditCommentPostsCommand>
 {
   private readonly postRepository: PostRepository;
   private readonly postCommentRepository: PostCommentRepository;
@@ -27,7 +27,7 @@ export class EditPostsCommentCommandHandler
     this.postCommentRepository = postCommentRepositoryImpl;
   }
 
-  async execute(command: EditPostsCommentCommand): Promise<PostId> {
+  async execute(command: EditCommentPostsCommand): Promise<PostId> {
     const post = await this.postRepository.findById(
       PostId.of({ id: command.postId }),
     );
@@ -50,7 +50,7 @@ export class EditPostsCommentCommandHandler
   }
 
   private async validate(
-    command: EditPostsCommentCommand,
+    command: EditCommentPostsCommand,
     params: { post: Post; postComment: PostComment },
   ) {
     const { post, postComment } = params;
@@ -65,7 +65,7 @@ export class EditPostsCommentCommandHandler
 
   private async edit(
     postComment: PostComment,
-    command: EditPostsCommentCommand,
+    command: EditCommentPostsCommand,
   ) {
     await postComment.editPostComment(command);
   }

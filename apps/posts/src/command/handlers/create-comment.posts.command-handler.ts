@@ -1,4 +1,7 @@
+import { UserId } from '@app/common';
 import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
+import * as dayjs from 'dayjs';
+import { nanoid } from 'nanoid';
 import { NotFoundPostCommentException } from '../../exception/not-found-post-comment.exception';
 import { NotFoundPostException } from '../../exception/not-found-post.exception';
 import { PostCommentRepositoryImpl } from '../../infra/post-comment.repository.impl';
@@ -9,11 +12,11 @@ import { Post } from '../domain/entities/post.entity';
 import { PostId } from '../domain/entities/post.id';
 import { PostCommentRepository } from '../domain/repository/post-comment.repository';
 import { PostRepository } from '../domain/repository/post.repository';
-import { RemovePostsCommentCommand } from '../impl/remove.posts-comment.command';
+import { CreateCommentPostsCommand } from '../impl/create-comment.posts.command';
 
-@CommandHandler(RemovePostsCommentCommand)
-export class RemovePostsCommentCommandHandler
-  implements ICommandHandler<RemovePostsCommentCommand>
+@CommandHandler(CreateCommentPostsCommand)
+export class CreateCommentPostsCommandHandler
+  implements ICommandHandler<CreateCommentPostsCommand>
 {
   private readonly postRepository: PostRepository;
   private readonly postCommentRepository: PostCommentRepository;
@@ -27,20 +30,14 @@ export class RemovePostsCommentCommandHandler
     this.postCommentRepository = postCommentRepositoryImpl;
   }
 
-  async execute(command: RemovePostsCommentCommand): Promise<PostId> {
+  async execute(command: CreateCommentPostsCommand): Promise<PostId> {
     const post = await this.postRepository.findById(
       PostId.of({ id: command.postId }),
     );
 
-    let postComment = await this.postCommentRepository.findById(
-      PostCommentId.of({ id: command.postCommentId }),
-    );
+    await this.validate(command, { post });
 
-    await this.validate(command, { post, postComment });
-
-    postComment = this.eventPublisher.mergeObjectContext(postComment);
-
-    await this.remove(postComment, command);
+    const postComment = await this.createPostComment(command);
 
     await this.postCommentRepository.save(postComment);
 
@@ -50,24 +47,44 @@ export class RemovePostsCommentCommandHandler
   }
 
   private async validate(
-    command: RemovePostsCommentCommand,
-    params: { post: Post; postComment: PostComment },
+    command: CreateCommentPostsCommand,
+    params: { post: Post },
   ) {
-    const { post, postComment } = params;
+    const { post } = params;
     if (!post)
       throw new NotFoundPostException(PostId.of({ id: command.postId }));
 
-    if (!postComment)
-      throw new NotFoundPostCommentException(
-        PostCommentId.of({ id: command.postCommentId }),
+    // 부모 댓글 ID가 있으면 부모 댓글이 존재하는지 유효성 검사를 합니다.
+    if (command.parentCommentId) {
+      const parentComment = await this.postCommentRepository.findById(
+        command.parentCommentId,
       );
+      if (!parentComment)
+        throw new NotFoundPostCommentException(command.parentCommentId);
+    }
   }
 
-  private async remove(
-    postComment: PostComment,
-    command: RemovePostsCommentCommand,
-  ) {
-    await postComment.remove(command);
+  /**
+   * 포스트 댓글 객체 생성
+   * @param command
+   */
+  async createPostComment(command: CreateCommentPostsCommand) {
+    const id = nanoid();
+
+    const postComment = this.eventPublisher.mergeObjectContext(
+      await PostComment.create({
+        ...command,
+        id: PostCommentId.of({ id }),
+        postId: PostId.of({ id: command.postId }),
+        parentCommentId: command.parentCommentId,
+        writer: UserId.of({ id: command.createBy }),
+        isUse: true,
+        createBy: command.createBy,
+        createdAt: dayjs(),
+      }),
+    );
+
+    return postComment;
   }
 
   /**
@@ -75,7 +92,7 @@ export class RemovePostsCommentCommandHandler
    * @param user
    */
   private publishEvent(postComment: PostComment) {
-    // post.apply(new RemovedUserEvent(post.id));
+    // post.apply(new CreatedUserEvent(post.id));
     postComment.commit();
   }
 }

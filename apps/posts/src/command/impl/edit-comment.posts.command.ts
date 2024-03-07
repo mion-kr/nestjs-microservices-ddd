@@ -1,4 +1,4 @@
-export class EditPostsCommentCommand {
+export class EditCommentPostsCommand {
   postId: string;
   postCommentId: string;
   comment: string;

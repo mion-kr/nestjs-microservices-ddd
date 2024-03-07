@@ -20,11 +20,11 @@ import {
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { PostCommentId } from '../command/domain/entities/post-comment.id';
-import { AddLikePostsCommentCommand } from '../command/impl/add-like.posts-comment.command';
-import { CreatePostsCommentCommand } from '../command/impl/create.posts-comment.command';
-import { EditPostsCommentCommand } from '../command/impl/edit.posts-comment.command';
-import { RemoveLikePostsCommentCommand } from '../command/impl/remove-like.posts-comment.command';
-import { RemovePostsCommentCommand } from '../command/impl/remove.posts-comment.command';
+import { AddLikeCommentPostsCommand } from '../command/impl/add-like-comment.posts.command';
+import { CreateCommentPostsCommand } from '../command/impl/create-comment.posts.command';
+import { EditCommentPostsCommand } from '../command/impl/edit-comment.posts.command';
+import { RemoveCommentPostsCommand } from '../command/impl/remove-comment.posts.command';
+import { RemoveCommentLikePostsCommand } from '../command/impl/remove-like-comment.posts.command';
 import { CreatePostsCommentDto } from './dto/create.posts-comment.dto';
 import { EditPostsCommentDto } from './dto/edit.posts-comment.dto';
 
@@ -46,8 +46,8 @@ export class PostsCommentController {
     @CurrentUser() user: IUserView,
   ) {
     const postCommentId: PostCommentId =
-      await this.commandBus.execute<CreatePostsCommentCommand>(
-        new CreatePostsCommentCommand({
+      await this.commandBus.execute<CreateCommentPostsCommand>(
+        new CreateCommentPostsCommand({
           ...dto,
           postId: postIdValue,
           createBy: user.id,
@@ -65,8 +65,8 @@ export class PostsCommentController {
     @CurrentUser() user: IUserView,
   ) {
     const postCommentId: PostCommentId =
-      await this.commandBus.execute<EditPostsCommentCommand>(
-        new EditPostsCommentCommand({
+      await this.commandBus.execute<EditCommentPostsCommand>(
+        new EditCommentPostsCommand({
           ...dto,
           postId: postIdValue,
           postCommentId: postCommentIdValue,
@@ -84,8 +84,8 @@ export class PostsCommentController {
     @CurrentUser() user: IUserView,
   ) {
     const postCommentId: PostCommentId =
-      await this.commandBus.execute<RemovePostsCommentCommand>(
-        new RemovePostsCommentCommand({
+      await this.commandBus.execute<RemoveCommentPostsCommand>(
+        new RemoveCommentPostsCommand({
           postId: postIdValue,
           postCommentId: postCommentIdValue,
           deleteBy: user.id,
@@ -102,8 +102,8 @@ export class PostsCommentController {
     @CurrentUser() user: IUserView,
   ) {
     const postCommentId: PostCommentId =
-      await this.commandBus.execute<AddLikePostsCommentCommand>(
-        new AddLikePostsCommentCommand({
+      await this.commandBus.execute<AddLikeCommentPostsCommand>(
+        new AddLikeCommentPostsCommand({
           postId: postIdValue,
           postCommentId: postCommentIdValue,
           userId: user.id,
@@ -120,8 +120,8 @@ export class PostsCommentController {
     @CurrentUser() user: IUserView,
   ) {
     const postCommentId: PostCommentId =
-      await this.commandBus.execute<RemoveLikePostsCommentCommand>(
-        new RemoveLikePostsCommentCommand({
+      await this.commandBus.execute<RemoveCommentLikePostsCommand>(
+        new RemoveCommentLikePostsCommand({
           postId: postIdValue,
           postCommentId: postCommentIdValue,
           userId: user.id,

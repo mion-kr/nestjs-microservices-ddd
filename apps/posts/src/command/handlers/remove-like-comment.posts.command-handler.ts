@@ -9,11 +9,11 @@ import { Post } from '../domain/entities/post.entity';
 import { PostId } from '../domain/entities/post.id';
 import { PostCommentRepository } from '../domain/repository/post-comment.repository';
 import { PostRepository } from '../domain/repository/post.repository';
-import { RemoveLikePostsCommentCommand } from '../impl/remove-like.posts-comment.command';
+import { RemoveCommentLikePostsCommand } from '../impl/remove-like-comment.posts.command';
 
-@CommandHandler(RemoveLikePostsCommentCommand)
-export class RemoveLikePostCommentsCommandHandler
-  implements ICommandHandler<RemoveLikePostsCommentCommand>
+@CommandHandler(RemoveCommentLikePostsCommand)
+export class RemoveLikeCommentPostCommandHandler
+  implements ICommandHandler<RemoveCommentLikePostsCommand>
 {
   private readonly postRepository: PostRepository;
   private readonly postCommentRepository: PostCommentRepository;
@@ -27,7 +27,7 @@ export class RemoveLikePostCommentsCommandHandler
     this.postCommentRepository = postCommentRepositoryImpl;
   }
 
-  async execute(command: RemoveLikePostsCommentCommand): Promise<PostId> {
+  async execute(command: RemoveCommentLikePostsCommand): Promise<PostId> {
     const post = await this.postRepository.findById(
       PostId.of({ id: command.postId }),
     );
@@ -50,7 +50,7 @@ export class RemoveLikePostCommentsCommandHandler
   }
 
   private async validate(
-    command: RemoveLikePostsCommentCommand,
+    command: RemoveCommentLikePostsCommand,
     params: { post: Post; postComment: PostComment },
   ) {
     const { post, postComment } = params;
@@ -64,7 +64,7 @@ export class RemoveLikePostCommentsCommandHandler
 
   private async removeLike(
     post: PostComment,
-    command: RemoveLikePostsCommentCommand,
+    command: RemoveCommentLikePostsCommand,
   ) {
     await post.removeLike({ userId: UserId.of({ id: command.userId }) });
   }

@@ -9,11 +9,11 @@ import { Post } from '../domain/entities/post.entity';
 import { PostId } from '../domain/entities/post.id';
 import { PostCommentRepository } from '../domain/repository/post-comment.repository';
 import { PostRepository } from '../domain/repository/post.repository';
-import { AddLikePostsCommentCommand } from '../impl/add-like.posts-comment.command';
+import { AddLikeCommentPostsCommand } from '../impl/add-like-comment.posts.command';
 
-@CommandHandler(AddLikePostsCommentCommand)
-export class AddLikePostsCommentCommandHandler
-  implements ICommandHandler<AddLikePostsCommentCommand>
+@CommandHandler(AddLikeCommentPostsCommand)
+export class AddLikeCommentPostsCommandHandler
+  implements ICommandHandler<AddLikeCommentPostsCommand>
 {
   private readonly postRepository: PostRepository;
   private readonly postCommentRepository: PostCommentRepository;
@@ -27,7 +27,7 @@ export class AddLikePostsCommentCommandHandler
     this.postCommentRepository = postCommentRepositoryImpl;
   }
 
-  async execute(command: AddLikePostsCommentCommand): Promise<PostId> {
+  async execute(command: AddLikeCommentPostsCommand): Promise<PostId> {
     const post = await this.postRepository.findById(
       PostId.of({ id: command.postId }),
     );
@@ -50,7 +50,7 @@ export class AddLikePostsCommentCommandHandler
   }
 
   private async validate(
-    command: AddLikePostsCommentCommand,
+    command: AddLikeCommentPostsCommand,
     params: { post: Post; postComment: PostComment },
   ) {
     const { post, postComment } = params;
@@ -64,7 +64,7 @@ export class AddLikePostsCommentCommandHandler
 
   private async addLike(
     postComment: PostComment,
-    command: AddLikePostsCommentCommand,
+    command: AddLikeCommentPostsCommand,
   ) {
     await postComment.addLike({ userId: UserId.of({ id: command.userId }) });
   }

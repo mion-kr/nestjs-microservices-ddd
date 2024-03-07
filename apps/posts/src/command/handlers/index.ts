@@ -1,24 +1,24 @@
-import { AddLikePostsCommentCommandHandler } from './add-like.posts-comment.command-handler';
+import { AddLikeCommentPostsCommandHandler } from './add-like-comment.posts.command-handler';
 import { AddLikePostsCommandHandler } from './add-like.posts.command-handler';
-import { CreatePostsCommentCommandHandler } from './create.posts-comment.command-handler';
+import { CreateCommentPostsCommandHandler } from './create-comment.posts.command-handler';
 import { CreatePostsCommandHandler } from './create.posts.command-handler';
-import { EditPostsCommentCommandHandler } from './edit.posts-comment.command-handler';
+import { EditCommentPostsCommandHandler } from './edit-comment.posts.command-handler';
 import { EditPostsCommandHandler } from './edit.posts.command-handler';
-import { RemoveLikePostCommentsCommandHandler } from './remove-like.posts-comment.command-handler';
+import { RemoveCommentPostsCommandHandler } from './remove-comment.posts.command-handler';
+import { RemoveLikeCommentPostCommandHandler } from './remove-like-comment.posts.command-handler';
 import { RemoveLikePostsCommandHandler } from './remove-like.posts.command-handler';
-import { RemovePostsCommentCommandHandler } from './remove.posts-comment.command-handler';
 
 export const CommandHandlers = [
   CreatePostsCommandHandler,
   EditPostsCommandHandler,
 
-  CreatePostsCommentCommandHandler,
-  EditPostsCommentCommandHandler,
-  RemovePostsCommentCommandHandler,
+  CreateCommentPostsCommandHandler,
+  EditCommentPostsCommandHandler,
+  RemoveCommentPostsCommandHandler,
 
   AddLikePostsCommandHandler,
   RemoveLikePostsCommandHandler,
 
-  AddLikePostsCommentCommandHandler,
-  RemoveLikePostCommentsCommandHandler,
+  AddLikeCommentPostsCommandHandler,
+  RemoveLikeCommentPostCommandHandler,
 ];

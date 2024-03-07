@@ -1,4 +1,4 @@
-export class RemovePostsCommentCommand {
+export class RemoveCommentPostsCommand {
   postId: string;
   postCommentId: string;
   deleteBy: string;

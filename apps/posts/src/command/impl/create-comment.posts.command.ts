@@ -1,6 +1,6 @@
 import { PostCommentId } from '../domain/entities/post-comment.id';
 
-export class CreatePostsCommentCommand {
+export class CreateCommentPostsCommand {
   postId: string;
   comment: string;
   parentCommentId?: PostCommentId;

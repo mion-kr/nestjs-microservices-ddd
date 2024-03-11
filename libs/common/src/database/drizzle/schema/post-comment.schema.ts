@@ -10,7 +10,7 @@ import {
 import { post } from './post.schema';
 import { user } from './user.schema';
 
-export const postComment = pgTable('postComment', {
+export const postComment = pgTable('post_comment', {
   id: char('id', { length: 21 }).primaryKey(),
   postId: char('post_id', { length: 21 })
     .references(() => post.id, { onDelete: 'cascade' })

@@ -64,6 +64,13 @@
       "when": 1709687841767,
       "tag": "0008_cold_payback",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "5",
+      "when": 1710130165287,
+      "tag": "0009_empty_giant_man",
+      "breakpoints": true
     }
   ]
 }

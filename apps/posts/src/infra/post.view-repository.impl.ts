@@ -2,10 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { and, eq, isNull, sql } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as schema from 'libs/common/src/database/drizzle/schema';
-import {
-  DrizzleAsyncProvider,
-  FindAllQuery,
-} from '../../../../libs/common/src';
+import { FindAllQuery } from '../../../../libs/common/src';
 import { PostId } from '../command/domain/entities/post.id';
 import { NotFoundPostsException } from '../exception/not-found.posts.exception';
 import { PostView } from '../query/domain/post.view-entity';
@@ -14,7 +11,8 @@ import { PostViewRepository } from '../query/domain/post.view-repository';
 @Injectable()
 export class PostViewRepositoryImpl implements PostViewRepository {
   constructor(
-    @Inject(DrizzleAsyncProvider) private db: NodePgDatabase<typeof schema>,
+    // @Inject(DrizzleAsyncProvider) private db: NodePgDatabase<typeof schema>,
+    @Inject('default') private db: NodePgDatabase<typeof schema>,
   ) {}
 
   async findAll<Params extends FindAllQuery>(

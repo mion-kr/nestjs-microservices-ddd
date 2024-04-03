@@ -1,4 +1,4 @@
-import { DrizzleAsyncProvider, FindAllQuery } from '@app/common';
+import { FindAllQuery } from '@app/common';
 import { Inject, Injectable } from '@nestjs/common';
 import { isObject } from '@nestjs/common/utils/shared.utils';
 import { and, eq, inArray, isNull } from 'drizzle-orm';
@@ -12,7 +12,8 @@ import { UserViewRepository } from '../query/domain/user.view-repository';
 @Injectable()
 export class UserViewRepositoryImpl implements UserViewRepository {
   constructor(
-    @Inject(DrizzleAsyncProvider) private db: NodePgDatabase<typeof schema>,
+    // @Inject(DrizzleAsyncProvider) private db: NodePgDatabase<typeof schema>,
+    @Inject('default') private db: NodePgDatabase<typeof schema>,
   ) {}
 
   async findAll<Params extends FindAllQuery>(

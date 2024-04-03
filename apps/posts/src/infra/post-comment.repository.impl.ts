@@ -1,4 +1,4 @@
-import { DrizzleAsyncProvider, UserId } from '@app/common';
+import { UserId } from '@app/common';
 import {
   Inject,
   Injectable,
@@ -17,7 +17,8 @@ import { PostCommentRepository } from '../command/domain/repository/post-comment
 @Injectable()
 export class PostCommentRepositoryImpl implements PostCommentRepository {
   constructor(
-    @Inject(DrizzleAsyncProvider) private db: NodePgDatabase<typeof schema>,
+    // @Inject(DrizzleAsyncProvider) private db: NodePgDatabase<typeof schema>,
+    @Inject('default') private db: NodePgDatabase<typeof schema>,
   ) {}
 
   async save(postComment: PostComment): Promise<void> {

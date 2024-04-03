@@ -14,7 +14,10 @@ export const DrizzleProvider = [
         connectionString: process.env.DATABASE_URL,
       });
 
-      const db = drizzle(pool, { schema: schema });
+      const db = drizzle(pool, {
+        schema: schema,
+        // logger: new PinoDrizzleLogger(),
+      });
       return db;
     },
     exports: [DrizzleAsyncProvider],

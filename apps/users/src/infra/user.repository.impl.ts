@@ -1,4 +1,4 @@
-import { DrizzleAsyncProvider, UserId } from '@app/common';
+import { UserId } from '@app/common';
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq, isNull } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
@@ -8,7 +8,8 @@ import { UserRepository } from '../command/domain/repository/user.repository';
 @Injectable()
 export class UserRepositoryImpl implements UserRepository {
   constructor(
-    @Inject(DrizzleAsyncProvider) private db: NodePgDatabase<typeof schema>,
+    // @Inject(DrizzleAsyncProvider) private db: NodePgDatabase<typeof schema>,
+    @Inject('default') private db: NodePgDatabase<typeof schema>,
   ) {}
 
   async save(user: User): Promise<void> {

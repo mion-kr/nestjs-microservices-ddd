@@ -1,4 +1,4 @@
-import { DrizzleAsyncProvider, FindAllQuery, UserId } from '@app/common';
+import { FindAllQuery, UserId } from '@app/common';
 import { Inject, Injectable } from '@nestjs/common';
 import * as dayjs from 'dayjs';
 import { and, eq, isNull, sql } from 'drizzle-orm';
@@ -14,7 +14,8 @@ export class PostCommentViewRepositoryImpl
   implements PostCommentViewRepository
 {
   constructor(
-    @Inject(DrizzleAsyncProvider) private db: NodePgDatabase<typeof schema>,
+    // @Inject(DrizzleAsyncProvider) private db: NodePgDatabase<typeof schema>,
+    @Inject('default') private db: NodePgDatabase<typeof schema>,
   ) {}
   async findAll<Params extends FindAllQuery>(
     params: Params,

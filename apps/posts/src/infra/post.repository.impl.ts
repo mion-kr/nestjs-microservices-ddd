@@ -1,4 +1,4 @@
-import { DrizzleAsyncProvider, ImageUrl, UserId } from '@app/common';
+import { ImageUrl, UserId } from '@app/common';
 import { Inject, Injectable } from '@nestjs/common';
 import * as dayjs from 'dayjs';
 import { and, eq, isNull } from 'drizzle-orm';
@@ -11,7 +11,8 @@ import { PostRepository } from '../command/domain/repository/post.repository';
 @Injectable()
 export class PostRepositoryImpl implements PostRepository {
   constructor(
-    @Inject(DrizzleAsyncProvider) private db: NodePgDatabase<typeof schema>,
+    // @Inject(DrizzleAsyncProvider) private db: NodePgDatabase<typeof schema>,
+    @Inject('default') private db: NodePgDatabase<typeof schema>,
   ) {}
 
   async save(post: Post): Promise<void> {

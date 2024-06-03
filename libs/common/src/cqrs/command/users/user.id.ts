@@ -1,3 +1,3 @@
-import { AbstractEntityId } from '../abstract.entity-id';
+import { AbstractEntityId } from '@app/common';
 
 export class UserId extends AbstractEntityId {}

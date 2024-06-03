@@ -1,5 +1,6 @@
 import {
   AbstractEntity,
+  EntityEquals,
   IsNotMatchPasswordException,
   PrivateSetProperty,
   UserId,
@@ -16,7 +17,10 @@ import * as dayjs from 'dayjs';
 import { InsertUser } from 'libs/common/src/database/drizzle/schema/user.schema';
 import { CanceledUserEvent } from '../../../event/impl/canceled.user.event';
 
-export class User extends AbstractEntity<User, UserId> {
+export class User
+  extends AbstractEntity<User, UserId>
+  implements EntityEquals<User>
+{
   @Expose({ name: 'email' })
   @PrivateSetProperty
   private _email: string;

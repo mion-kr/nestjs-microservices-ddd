@@ -11,10 +11,19 @@ export class PostView {
   likeUserIds: string[];
   likeUsers: IUserView[];
   isUse: boolean;
+  createdAt: Date;
 
   static async create(params: SelectPost) {
-    const { id, title, content, writer, imageUrls, likeUserIds, isUse } =
-      params;
+    const {
+      id,
+      title,
+      content,
+      writer,
+      imageUrls,
+      likeUserIds,
+      isUse,
+      createdAt,
+    } = params;
 
     const post = new PostView();
     post.id = id;
@@ -24,6 +33,7 @@ export class PostView {
     post.images = imageUrls;
     post.likeUserIds = likeUserIds;
     post.isUse = isUse;
+    post.createdAt = createdAt;
 
     return post;
   }

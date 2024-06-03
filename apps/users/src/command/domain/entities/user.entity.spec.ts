@@ -91,4 +91,18 @@ describe('user', () => {
     const matched = await user.isMatchPassword('q1234!!');
     expect(matched).toBe(true);
   });
+
+  it('toJson Test', async () => {
+    const user = await User.create({
+      id: UserId.of({ id: 'test' }),
+      email: 'test@gmail.com',
+      nickName: 'tss',
+      password: 'q1234!',
+      createBy: 'mion',
+      createdAt: dayjs(),
+    });
+
+    console.log(JSON.stringify(user));
+    console.log(JSON.stringify(user));
+  });
 });

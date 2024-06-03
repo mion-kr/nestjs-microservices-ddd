@@ -3,8 +3,14 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { Transport } from '@nestjs/microservices';
 import * as CookieParser from 'cookie-parser';
+// import * as dayjs from 'dayjs';
+// import * as timezone from 'dayjs/plugin/timezone';
+// import * as utc from 'dayjs/plugin/utc';
 import { Logger } from 'nestjs-pino';
 import { PostsModule } from './posts.module';
+// dayjs.extend(utc);
+// dayjs.extend(timezone);
+// dayjs.tz.setDefault('Asia/Seoul');
 
 async function bootstrap() {
   const app = await NestFactory.create(PostsModule);

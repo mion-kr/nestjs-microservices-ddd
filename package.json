@@ -22,7 +22,8 @@
     "db:pull": "drizzle-kit introspect:pg --config=libs/common/src/database/drizzle/drizzle.config.ts",
     "db:push": "drizzle-kit push:pg --config=libs/common/src/database/drizzle/drizzle.config.ts",
     "db:drop": "drizzle-kit drop --config=libs/common/src/database/drizzle/drizzle.config.ts",
-    "db:check": "drizzle-kit check:pg --config=libs/common/src/database/drizzle/drizzle.config.ts"
+    "db:check": "drizzle-kit check:pg --config=libs/common/src/database/drizzle/drizzle.config.ts",
+    "db:studio": "drizzle-kit studio --config=libs/common/src/database/drizzle/drizzle.config.ts"
   },
   "dependencies": {
     "@knaadh/nestjs-drizzle-pg": "^1.0.0",
@@ -39,7 +40,7 @@
     "class-validator": "^0.14.0",
     "cookie-parser": "^1.4.6",
     "dayjs": "^1.11.10",
-    "drizzle-orm": "^0.29.4",
+    "drizzle-orm": "^0.30.7",
     "express": "^4.18.2",
     "joi": "^17.11.0",
     "nanoid": "^3.3.6",

@@ -1,10 +1,8 @@
 {
-  "id": "cbddcbfb-ff2a-4973-9dc2-0d018d36997a",
-  "prevId": "90530b6b-44a3-444b-9492-aab67bba2e7e",
-  "version": "5",
-  "dialect": "pg",
+  "version": "7",
+  "dialect": "postgresql",
   "tables": {
-    "postComment": {
+    "public.postComment": {
       "name": "postComment",
       "schema": "",
       "columns": {
@@ -93,47 +91,47 @@
         "postComment_post_id_post_id_fk": {
           "name": "postComment_post_id_post_id_fk",
           "tableFrom": "postComment",
-          "tableTo": "post",
           "columnsFrom": [
             "post_id"
           ],
+          "tableTo": "post",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         },
         "postComment_parent_comment_id_postComment_id_fk": {
           "name": "postComment_parent_comment_id_postComment_id_fk",
           "tableFrom": "postComment",
-          "tableTo": "postComment",
           "columnsFrom": [
             "parent_comment_id"
           ],
+          "tableTo": "postComment",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "postComment_writer_user_id_fk": {
           "name": "postComment_writer_user_id_fk",
           "tableFrom": "postComment",
-          "tableTo": "user",
           "columnsFrom": [
             "writer"
           ],
+          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "post": {
+    "public.post": {
       "name": "post",
       "schema": "",
       "columns": {
@@ -228,21 +226,21 @@
         "post_writer_user_id_fk": {
           "name": "post_writer_user_id_fk",
           "tableFrom": "post",
-          "tableTo": "user",
           "columnsFrom": [
             "writer"
           ],
+          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "user": {
+    "public.user": {
       "name": "user",
       "schema": "",
       "columns": {
@@ -328,8 +326,10 @@
   "enums": {},
   "schemas": {},
   "_meta": {
-    "columns": {},
     "schemas": {},
-    "tables": {}
-  }
+    "tables": {},
+    "columns": {}
+  },
+  "id": "cbddcbfb-ff2a-4973-9dc2-0d018d36997a",
+  "prevId": "90530b6b-44a3-444b-9492-aab67bba2e7e"
 }

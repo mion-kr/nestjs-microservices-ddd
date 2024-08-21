@@ -43,7 +43,7 @@ export class CreateUserJwtTokenCommandHandler
     // 쿠키 만료일시
     const expires = new Date();
     expires.setSeconds(
-      expires.getSeconds() + this.configService.get('JWT_EXPIRATION'),
+      expires.getSeconds() + Number(this.configService.get('JWT_EXPIRATION')),
     );
 
     response.cookie(CookieHeader.Authentication, token, { httpOnly: true });

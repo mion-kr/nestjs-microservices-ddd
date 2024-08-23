@@ -187,7 +187,7 @@ export class Post
    * @returns
    */
   private isMatchWriter(userId: UserId) {
-    return this._writer.toString() === userId.toString();
+    return this._writer.equals(userId);
   }
 
   get id(): PostId {
